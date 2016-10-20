@@ -57,7 +57,7 @@ class Logger {
      * @type {string}
      * @private
      */
-    this.level_ = LOG_LEVELS['log'];
+    this.level_ = LOG_LEVELS.indexOf('log');
 
   }
 
@@ -198,7 +198,7 @@ class Logger {
       Logger._concat.call(this, 'HGH', 'yellow', args);
     }
     return this;
-  };
+  }
 
   /**
    * Sends a debug log into the console
@@ -208,7 +208,7 @@ class Logger {
     if (!this.silent_ && this.isDebugging)
       Logger._concat.call(this, 'DBG', 'blue', args);
     return this;
-  };
+  }
 
   /**
    * Sends an info log into the console
@@ -218,7 +218,7 @@ class Logger {
     if (!this.silent_ && INFO_LEVEL >= this.level_)
       Logger._concat.call(this, 'INF', null, args);
     return this;
-  };
+  }
 
   /**
    * Sends a simple log into the console
@@ -228,7 +228,7 @@ class Logger {
     if (!this.silent_ && LOG_LEVEL >= this.level_)
       Logger._concat.call(this, 'LOG', null, args);
     return this;
-  };
+  }
 
   /**
    * Sends a warning log into the console
@@ -238,7 +238,7 @@ class Logger {
     if (!this.silent_ && WARN_LEVEL >= this.level_)
       Logger._concat.call(this, 'WRN', 'yellow', args);
     return this;
-  };
+  }
 
   /**
    * Sends an error log into the console
@@ -248,7 +248,7 @@ class Logger {
     if (!this.silent_ && ERROR_LEVEL >= this.level_)
       concat.call(this, 'ERR', 'red', args);
     return this;
-  };
+  }
 
   /**
    * Sends a fatal log into the console and throws a new error
@@ -258,7 +258,7 @@ class Logger {
     if (!this.silent_)
       Logger._concat.call(this, 'ERR', 'red', args);
     throw new TypeError(args[0]);
-  };
+  }
 
 }
 
