@@ -262,4 +262,9 @@ class Logger{
 
 }
 
+/**
+ * Returns a new instance of the logger.
+ */
+Logger.logger = () => new Logger();
+
 module.exports = Logger;
