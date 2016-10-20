@@ -6,11 +6,11 @@
     "url": "git@github.com:ezzygemini/logger.git"
   },
   "license": "MIT",
-  "version": "0.0.15",
+  "version": "0.1.0",
   "dependencies": {
     "callsite": "^1.0.0",
     "cli-color": "^1.1.0",
-    "config-setup": "git@github.com:ezzygemini/config-setup.git",
+    "config-setup": "git@github.com:ezzygemini/config-setup.git>=0.1.0",
     "path": "^0.12.7"
   }
 }
