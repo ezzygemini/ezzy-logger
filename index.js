@@ -41,9 +41,9 @@ const ERROR_LEVEL = LOG_LEVELS.indexOf('error');
  * A logger class that spits out log entries into the console colored and
  * stylized in different ways depending on the level.
  */
-class Logger{
+class Logger {
 
-  constructor(){
+  constructor() {
 
     /**
      * Indicates if we should be silent.
@@ -94,19 +94,19 @@ class Logger{
     let i;
     let border;
 
-    if (typeof config.message === 'function'){
+    if (typeof config.message === 'function') {
       config.message = config.message();
     }
 
-    if (typeof config.message === 'object'){
+    if (typeof config.message === 'object') {
       config.message = JSON.stringify(config.message);
     }
 
-    if (config.type !== ''){
+    if (config.type !== '') {
       config.type = '[' + config.type + '] ';
     }
 
-    if (config.suffix){
+    if (config.suffix) {
       config.message = '[' + logType + '] ' + config.type + config.message;
     }
 
@@ -130,28 +130,28 @@ class Logger{
       );
     }
 
-    if (config.color){
+    if (config.color) {
       config.message = clc[config.color](config.message);
     }
 
-    if (config.marginTop){
-      for (i = 0; i < config.marginTop; i++){
+    if (config.marginTop) {
+      for (i = 0; i < config.marginTop; i++) {
         console.log('');
       }
     }
 
-    if (config.borderTop || config.borderBottom){
+    if (config.borderTop || config.borderBottom) {
       border = clc[config.color]
       (new Array(config.borderLength).join(config.borderChar));
     }
 
-    if (config.borderTop){
+    if (config.borderTop) {
       console.log(border);
     }
 
     console.log(indentation + config.message);
 
-    if (config.borderTop){
+    if (config.borderTop) {
       console.log(border);
     }
 
@@ -176,7 +176,7 @@ class Logger{
    * Sets the logger to talk
    * @returns {Logger}
    */
-  talk(){
+  talk() {
     this.silent_ = false;
     return this;
   }
@@ -185,7 +185,7 @@ class Logger{
    * Checks if we're debugging.
    * @returns {boolean}
    */
-  get isDebugging(){
+  get isDebugging() {
     return DEBUG_LEVEL >= this.level_;
   }
 
@@ -193,8 +193,8 @@ class Logger{
    * Sends a highlight info log to the console
    * @returns {Logger}
    */
-  highlight(...args){
-    if (!this.silent_ && INFO_LEVEL >= this.level_){
+  highlight(...args) {
+    if (!this.silent_ && INFO_LEVEL >= this.level_) {
       Logger._concat.call(this, 'HGH', 'yellow', args);
     }
     return this;
@@ -265,6 +265,11 @@ class Logger{
 /**
  * Returns a new instance of the logger.
  */
-Logger.logger = () => new Logger();
+Logger.logger = () => {
+  if (!this._logger) {
+    this._logger = new Logger();
+  }
+  return this._logger;
+};
 
 module.exports = Logger;
