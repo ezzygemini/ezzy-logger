@@ -1,0 +1,10 @@
+{
+  "name": "logger",
+  "version": "0.0.1",
+  "dependencies": {
+    "callsite": "^1.0.0",
+    "cli-color": "^1.1.0",
+    "config-setup": "git@github.com:ezzygemini/config-setup.git",
+    "path": "^0.12.7"
+  }
+}
