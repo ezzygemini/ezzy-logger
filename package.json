@@ -1,5 +1,6 @@
 {
   "name": "logger",
+  "description": "A logging tool",
   "version": "0.0.1",
   "dependencies": {
     "callsite": "^1.0.0",
