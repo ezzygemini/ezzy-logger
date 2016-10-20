@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git@github.com:ezzygemini/logger.git"
   },
-  "license": "MIT License",
+  "license": "MIT",
   "version": "0.0.1",
   "dependencies": {
     "callsite": "^1.0.0",
