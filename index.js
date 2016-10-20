@@ -193,9 +193,9 @@ class Logger {
    * Sends a highlight info log to the console
    * @returns {Logger}
    */
-  highlight(...args) {
+  highlight() {
     if (!this.silent_ && INFO_LEVEL >= this.level_) {
-      Logger._concat.call(this, 'HGH', 'yellow', args);
+      Logger._concat.call(this, 'HGH', 'yellow', arguments);
     }
     return this;
   }
@@ -204,9 +204,9 @@ class Logger {
    * Sends a debug log into the console
    * @returns {Logger}
    */
-  debug(...args) {
+  debug() {
     if (!this.silent_ && this.isDebugging)
-      Logger._concat.call(this, 'DBG', 'blue', args);
+      Logger._concat.call(this, 'DBG', 'blue', arguments);
     return this;
   }
 
@@ -214,9 +214,9 @@ class Logger {
    * Sends an info log into the console
    * @returns {Logger}
    */
-  info(...args) {
+  info() {
     if (!this.silent_ && INFO_LEVEL >= this.level_)
-      Logger._concat.call(this, 'INF', null, args);
+      Logger._concat.call(this, 'INF', null, arguments);
     return this;
   }
 
@@ -224,9 +224,9 @@ class Logger {
    * Sends a simple log into the console
    * @returns {Logger}
    */
-  log(...args) {
+  log() {
     if (!this.silent_ && LOG_LEVEL >= this.level_)
-      Logger._concat.call(this, 'LOG', null, args);
+      Logger._concat.call(this, 'LOG', null, arguments);
     return this;
   }
 
@@ -234,9 +234,9 @@ class Logger {
    * Sends a warning log into the console
    * @returns {Logger}
    */
-  warn(...args) {
+  warn() {
     if (!this.silent_ && WARN_LEVEL >= this.level_)
-      Logger._concat.call(this, 'WRN', 'yellow', args);
+      Logger._concat.call(this, 'WRN', 'yellow', arguments);
     return this;
   }
 
@@ -244,9 +244,9 @@ class Logger {
    * Sends an error log into the console
    * @returns {Logger}
    */
-  error(...args) {
+  error() {
     if (!this.silent_ && ERROR_LEVEL >= this.level_)
-      concat.call(this, 'ERR', 'red', args);
+      Logger._concat.call(this, 'ERR', 'red', arguments);
     return this;
   }
 
@@ -254,9 +254,9 @@ class Logger {
    * Sends a fatal log into the console and throws a new error
    * @throws {TypeError}
    */
-  fatal(...args) {
+  fatal() {
     if (!this.silent_)
-      Logger._concat.call(this, 'ERR', 'red', args);
+      Logger._concat.call(this, 'ERR', 'red', arguments);
     throw new TypeError(args[0]);
   }
 
