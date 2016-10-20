@@ -1,6 +1,6 @@
 {
   "name": "logger",
-  "description": "A logging tool",
+  "description": "A logging tool for node",
   "repository": {
     "type": "git",
     "url": "git@github.com:ezzygemini/logger.git"
