@@ -10,7 +10,7 @@
   "dependencies": {
     "callsite": "^1.0.0",
     "cli-color": "^1.1.0",
-    "config-setup": "git@github.com:ezzygemini/config-setup.git#>=0.1.0",
+    "config-setup": "git@github.com:ezzygemini/config-setup.git#head",
     "path": "^0.12.7"
   }
 }
