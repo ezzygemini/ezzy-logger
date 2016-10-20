@@ -6,7 +6,7 @@
     "url": "git@github.com:ezzygemini/logger.git"
   },
   "license": "MIT",
-  "version": "0.0.1",
+  "version": "0.0.15",
   "dependencies": {
     "callsite": "^1.0.0",
     "cli-color": "^1.1.0",
