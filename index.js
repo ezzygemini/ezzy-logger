@@ -77,7 +77,7 @@ class Logger {
         color: debugColor,
         indent: 0,
         suffix: true,
-        line: isDebugging,
+        line: this.isDebugging,
         marginTop: 0,
         marginBottom: 0,
         borderTop: false,
