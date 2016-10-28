@@ -37,6 +37,14 @@ const WARN_LEVEL = LOG_LEVELS.indexOf('warn');
 const ERROR_LEVEL = LOG_LEVELS.indexOf('error');
 
 /**
+ * The throttle timeouts.
+ *
+ * @type {object}
+ * @private
+ */
+const _throttle = {};
+
+/**
  * A logger class that spits out log entries into the console colored and
  * stylized in different ways depending on the level.
  */
@@ -59,14 +67,6 @@ class Logger {
      * @private
      */
     this.level_ = LOG_LEVELS.indexOf('log');
-
-    /**
-     * The throttle timeouts.
-     *
-     * @type {object}
-     * @private
-     */
-    this._throttle = {};
 
   }
 
@@ -294,17 +294,32 @@ class Logger {
    * @param opt_method
    */
   throttle(msg, opt_timeout = 1000, opt_method = 'log') {
-    if (this._throttle[msg]) {
-      clearTimeout(this._throttle[msg]);
+    if (!_throttle[msg]) {
+      _throttle[msg] = {
+        msg,
+        method: opt_method,
+        timeout: setTimeout(this.throttleCall_(msg), opt_timeout)
+      };
+    } else {
+      clearTimeout(_throttle[msg].timeout);
+      _throttle[msg].timeout =
+        setTimeout(this.throttleCall_(msg), opt_timeout);
     }
-    this._throttle[msg] = setTimeout((function() {
-      this.handler(this.msg);
-      delete this.self._throttle[this.msg];
-    }).bind({
-      handler: this[opt_method],
-      msg: msg,
-      self: this
-    }), opt_timeout);
+  }
+
+  /**
+   * Creates a function bound to the message.
+   * @param {string} msg The message to be logged.
+   * @returns {function}
+   * @private
+   */
+  throttleCall_(msg) {
+    const self = this;
+    return function() {
+      const key = this.toString();
+      self[_throttle[key].method](key);
+      delete _throttle[key];
+    }.bind(msg);
   }
 
 }
