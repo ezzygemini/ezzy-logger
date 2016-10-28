@@ -18,7 +18,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 const LOG_LEVELS = [
   'debug',
   'log',
@@ -47,6 +46,7 @@ class Logger {
 
     /**
      * Indicates if we should be silent.
+     *
      * @type {boolean}
      * @private
      */
@@ -54,18 +54,28 @@ class Logger {
 
     /**
      * The level of logging.
+     *
      * @type {string}
      * @private
      */
     this.level_ = LOG_LEVELS.indexOf('log');
 
+    /**
+     * The throttle timeouts.
+     *
+     * @type {object}
+     * @private
+     */
+    this._throttle = {};
+
   }
 
   /**
-   * Concatenates the type of log into a single string for the console
-   * @param {String} logType The log type
-   * @param {String} debugColor Color to use for the console
-   * @param {Arguments} args The arguments to check as configuration
+   * Concatenates the type of log into a single string for the console.
+   *
+   * @param {String} logType The log type.
+   * @param {String} debugColor Color to use for the console.
+   * @param {Arguments} args The arguments to check as configuration.
    * @private
    */
   static _concat(logType, debugColor, args) {
@@ -164,7 +174,8 @@ class Logger {
   }
 
   /**
-   * Sets the logger to silence
+   * Sets the logger to silence.
+   *
    * @returns {Logger}
    */
   silence() {
@@ -173,7 +184,8 @@ class Logger {
   }
 
   /**
-   * Sets the logger to talk
+   * Sets the logger to talk.
+   *
    * @returns {Logger}
    */
   talk() {
@@ -183,6 +195,7 @@ class Logger {
 
   /**
    * Checks if we're debugging.
+   *
    * @returns {boolean}
    */
   get isDebugging() {
@@ -190,7 +203,8 @@ class Logger {
   }
 
   /**
-   * Sends a highlight info log to the console
+   * Sends a highlight info log to the console.
+   *
    * @returns {Logger}
    */
   highlight() {
@@ -201,63 +215,96 @@ class Logger {
   }
 
   /**
-   * Sends a debug log into the console
+   * Sends a debug log into the console.
+   *
    * @returns {Logger}
    */
   debug() {
-    if (!this.silent_ && this.isDebugging)
+    if (!this.silent_ && this.isDebugging) {
       Logger._concat.call(this, 'DBG', 'blue', arguments);
+    }
     return this;
   }
 
   /**
-   * Sends an info log into the console
+   * Sends an info log into the console.
+   *
    * @returns {Logger}
    */
   info() {
-    if (!this.silent_ && INFO_LEVEL >= this.level_)
+    if (!this.silent_ && INFO_LEVEL >= this.level_) {
       Logger._concat.call(this, 'INF', null, arguments);
+    }
     return this;
   }
 
   /**
-   * Sends a simple log into the console
+   * Sends a simple log into the console.
+   *
    * @returns {Logger}
    */
   log() {
-    if (!this.silent_ && LOG_LEVEL >= this.level_)
+    if (!this.silent_ && LOG_LEVEL >= this.level_) {
       Logger._concat.call(this, 'LOG', null, arguments);
+    }
     return this;
   }
 
   /**
-   * Sends a warning log into the console
+   * Sends a warning log into the console.
+   *
    * @returns {Logger}
    */
   warn() {
-    if (!this.silent_ && WARN_LEVEL >= this.level_)
+    if (!this.silent_ && WARN_LEVEL >= this.level_) {
       Logger._concat.call(this, 'WRN', 'yellow', arguments);
+    }
     return this;
   }
 
   /**
-   * Sends an error log into the console
+   * Sends an error log into the console.
+   *
    * @returns {Logger}
    */
   error() {
-    if (!this.silent_ && ERROR_LEVEL >= this.level_)
+    if (!this.silent_ && ERROR_LEVEL >= this.level_) {
       Logger._concat.call(this, 'ERR', 'red', arguments);
+    }
     return this;
   }
 
   /**
-   * Sends a fatal log into the console and throws a new error
+   * Sends a fatal log into the console and throws a new error.
+   *
    * @throws {TypeError}
    */
   fatal() {
-    if (!this.silent_)
+    if (!this.silent_) {
       Logger._concat.call(this, 'ERR', 'red', arguments);
+    }
     throw new TypeError(args[0]);
+  }
+
+  /**
+   * Throttles a message to be logged and logs it once.
+   *
+   * @param msg
+   * @param opt_timeout
+   * @param opt_method
+   */
+  throttle(msg, opt_timeout = 1000, opt_method = 'log') {
+    if (this._throttle[msg]) {
+      clearTimeout(this._throttle[msg]);
+    }
+    this._throttle[msg] = setTimeout((function() {
+      this.handler(this.msg);
+      delete this.self._throttle[this.msg];
+    }).bind({
+      handler: this[opt_method],
+      msg: msg,
+      self: this
+    }), opt_timeout);
   }
 
 }
