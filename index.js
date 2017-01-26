@@ -19,13 +19,14 @@
  * SOFTWARE.
  */
 const LOG_LEVELS = [
-  'debug',
-  'log',
-  'info',
-  'warn',
   'error',
-  'fatal'
+  'warn',
+  'highlight',
+  'info',
+  'log',
+  'debug'
 ];
+const argument = require('argument');
 const path = require('path');
 const callsite = require('callsite');
 const clc = require('cli-color');
@@ -33,8 +34,10 @@ const configSetup = require('config-setup');
 const DEBUG_LEVEL = LOG_LEVELS.indexOf('debug');
 const INFO_LEVEL = LOG_LEVELS.indexOf('info');
 const LOG_LEVEL = LOG_LEVELS.indexOf('log');
+const HIGHLIGHT_LEVEL = LOG_LEVELS.indexOf('highlight');
 const WARN_LEVEL = LOG_LEVELS.indexOf('warn');
 const ERROR_LEVEL = LOG_LEVELS.indexOf('error');
+const trueTypeOf = require('true-typeof');
 
 /**
  * The throttle timeouts.
@@ -52,13 +55,15 @@ class Logger {
 
   constructor() {
 
+    const defaultLevel = argument(['LOG_LEVEL', 'NODE_LOG_LEVEL'], 'info');
+
     /**
      * Indicates if we should be silent.
      *
      * @type {boolean}
      * @private
      */
-    this.silent_ = false;
+    this._silent = false;
 
     /**
      * The level of logging.
@@ -66,8 +71,37 @@ class Logger {
      * @type {string}
      * @private
      */
-    this.level_ = LOG_LEVELS.indexOf('log');
+    this._level = LOG_LEVELS.indexOf(defaultLevel);
 
+    /**
+     * The levels of logging.
+     * @type {string[]}
+     */
+    this.LEVELS = LOG_LEVELS;
+
+  }
+
+  /**
+   * Sets the level of logging.
+   * @param {*} level The new level
+   */
+  set level(level) {
+    console.log(clc.magentaBright
+      .bold(`[LOG] Requested logging level to change to '${level}'`));
+    if (isNaN(level)) {
+      const index = LOG_LEVELS.indexOf(level);
+      this._level = index > -1 ? index : 0;
+    } else {
+      this._level = parseInt(level);
+    }
+  }
+
+  /**
+   * Gets the level.
+   * @returns {number}
+   */
+  get level() {
+    return this._level;
   }
 
   /**
@@ -82,62 +116,68 @@ class Logger {
 
     const config = configSetup(
       {
+        title: '',
         message: '',
+        data: null,
         type: '',
         color: debugColor,
         indent: 0,
-        suffix: true,
-        line: this.isDebugging,
+        prefix: true,
+        suffix: this.isDebugging,
         marginTop: 0,
         marginBottom: 0,
-        borderTop: false,
-        borderBottom: false,
-        borderChar: '-',
-        borderLength: 20
+        paddingBottom: 0,
+        paddingTop: 0,
+        borderTop: 0,
+        borderBottom: 0,
+        borderChar: '-'
       },
       args,
+      ['message:error'],
       ['this:object'],
       ['message:string'],
       ['message:function']
     );
-    let indentation = new Array(config.indent).join(' ');
+    const indentation = new Array(config.indent).join(' ');
     let i;
     let border;
 
-    if (typeof config.message === 'function') {
+    if (trueTypeOf(config.message) === 'error') {
+      config.message = config.message.message;
+    }
+
+    if (trueTypeOf(config.message) === 'function') {
       config.message = config.message();
     }
 
-    if (typeof config.message === 'object') {
+    if (trueTypeOf(config.message) === 'object') {
       config.message = JSON.stringify(config.message);
     }
 
+    if (config.data) {
+      config.message += JSON.stringify(config.data);
+    }
+
+    if (config.message === '') {
+      return;
+    }
+
     if (config.type !== '') {
-      config.type = '[' + config.type + '] ';
+      config.type = `[${config.type}] `;
     }
 
-    if (config.suffix) {
-      config.message = '[' + logType + '] ' + config.type + config.message;
+    if (config.title) {
+      config.message = `[${config.title}] ${config.message}`;
     }
 
-    if (config.line) {
-      /**
-       * @type {{
-       *  getFileName: function,
-       *  getLineNumber: function,
-       *  getColumnNumber: function
-       * }}
-       */
-      const call = callsite()[2];
-      config.message += clc.inverse(
-        ' (' +
-        path.basename(call.getFileName()) +
-        ' ' +
-        call.getLineNumber() +
-        ':' +
-        call.getColumnNumber() +
-        ')'
-      );
+    if (config.prefix) {
+      config.message = `[${logType}] ${config.type}${config.message}`;
+    }
+
+    if (typeof config.suffix === 'string') {
+      config.message += clc.blackBright(` (${config.suffix})`);
+    } else if (config.suffix) {
+      config.message += clc.blackBright(` (${this._getLastLine()})`);
     }
 
     if (config.color) {
@@ -152,14 +192,27 @@ class Logger {
 
     if (config.borderTop || config.borderBottom) {
       border = clc[config.color]
-      (new Array(config.borderLength).join(config.borderChar));
+      (new Array(Math.max(config.borderTop, config.borderBottom))
+        .join(config.borderChar));
     }
 
     if (config.borderTop) {
       console.log(border);
     }
 
+    if (config.paddingTop) {
+      for (i = 0; i < config.paddingTop; i++) {
+        console.log('');
+      }
+    }
+
     console.log(indentation + config.message);
+
+    if (config.paddingBottom) {
+      for (i = 0; i < config.paddingBottom; i++) {
+        console.log('');
+      }
+    }
 
     if (config.borderTop) {
       console.log(border);
@@ -174,12 +227,32 @@ class Logger {
   }
 
   /**
+   * Obtains the last line called in the stack trace.
+   * @returns {string}
+   * @private
+   */
+  _getLastLine() {
+    /**
+     * @type {{
+       *  getFileName: function,
+       *  getLineNumber: function,
+       *  getColumnNumber: function
+       * }}
+     */
+    const call = callsite().find(l => !/Logger\.js$/.test(l.getFileName()));
+    const fileName = path.basename(call.getFileName());
+    const colNo = call.getColumnNumber();
+    const lineNo = call.getLineNumber();
+    return clc.blackBright(`${fileName} ${lineNo}:${colNo}`);
+  }
+
+  /**
    * Sets the logger to silence.
    *
    * @returns {Logger}
    */
   silence() {
-    this.silent_ = true;
+    this._silent = true;
     return this;
   }
 
@@ -189,7 +262,7 @@ class Logger {
    * @returns {Logger}
    */
   talk() {
-    this.silent_ = false;
+    this._silent = false;
     return this;
   }
 
@@ -199,7 +272,7 @@ class Logger {
    * @returns {boolean}
    */
   get isDebugging() {
-    return DEBUG_LEVEL >= this.level_;
+    return this._level >= DEBUG_LEVEL;
   }
 
   /**
@@ -208,8 +281,8 @@ class Logger {
    * @returns {Logger}
    */
   highlight() {
-    if (!this.silent_ && INFO_LEVEL >= this.level_) {
-      Logger._concat.call(this, 'HGH', 'yellow', arguments);
+    if (!this._silent && this._level >= HIGHLIGHT_LEVEL) {
+      Logger._concat.call(this, 'HGH', 'yellowBright', arguments);
     }
     return this;
   }
@@ -220,8 +293,8 @@ class Logger {
    * @returns {Logger}
    */
   debug() {
-    if (!this.silent_ && this.isDebugging) {
-      Logger._concat.call(this, 'DBG', 'blue', arguments);
+    if (!this._silent && this.isDebugging) {
+      Logger._concat.call(this, 'DBG', 'magenta', arguments);
     }
     return this;
   }
@@ -232,7 +305,7 @@ class Logger {
    * @returns {Logger}
    */
   info() {
-    if (!this.silent_ && INFO_LEVEL >= this.level_) {
+    if (!this._silent && this._level >= INFO_LEVEL) {
       Logger._concat.call(this, 'INF', null, arguments);
     }
     return this;
@@ -244,7 +317,7 @@ class Logger {
    * @returns {Logger}
    */
   log() {
-    if (!this.silent_ && LOG_LEVEL >= this.level_) {
+    if (!this._silent && this._level >= LOG_LEVEL) {
       Logger._concat.call(this, 'LOG', null, arguments);
     }
     return this;
@@ -256,7 +329,7 @@ class Logger {
    * @returns {Logger}
    */
   warn() {
-    if (!this.silent_ && WARN_LEVEL >= this.level_) {
+    if (!this._silent && this._level >= WARN_LEVEL) {
       Logger._concat.call(this, 'WRN', 'yellow', arguments);
     }
     return this;
@@ -268,7 +341,7 @@ class Logger {
    * @returns {Logger}
    */
   error() {
-    if (!this.silent_ && ERROR_LEVEL >= this.level_) {
+    if (!this._silent && this._level >= ERROR_LEVEL) {
       Logger._concat.call(this, 'ERR', 'red', arguments);
     }
     return this;
@@ -280,58 +353,120 @@ class Logger {
    * @throws {TypeError}
    */
   fatal() {
-    if (!this.silent_) {
+    if (!this._silent) {
       Logger._concat.call(this, 'ERR', 'red', arguments);
     }
     throw new TypeError(args[0]);
   }
 
   /**
-   * Throttles a message to be logged and logs it once.
-   *
-   * @param msg
-   * @param opt_timeout
-   * @param opt_method
+   * Shortcut to assertion.
+   * @param {*} val Value to assert.
+   * @param {string=} msg The message to display.
    */
-  throttle(msg, opt_timeout = 1000, opt_method = 'log') {
-    if (!_throttle[msg]) {
-      _throttle[msg] = {
-        msg,
-        method: opt_method,
-        timeout: setTimeout(this.throttleCall_(msg), opt_timeout)
-      };
-    } else {
-      clearTimeout(_throttle[msg].timeout);
-      _throttle[msg].timeout =
-        setTimeout(this.throttleCall_(msg), opt_timeout);
+  assert(val, msg) {
+    if (!this._silent && this._level >= ERROR_LEVEL) {
+      if (!val) {
+        Logger._concat.call(this, 'AST', 'red', [msg || 'Assertion Failed']);
+      }
     }
   }
 
   /**
-   * Creates a function bound to the message.
-   * @param {string} msg The message to be logged.
-   * @returns {function}
-   * @private
+   * Throttles a message to be logged and logs it once.
+   *
+   * @param msg
+   * @param timeout
+   * @param method
    */
-  throttleCall_(msg) {
+  throttle(msg, timeout = 1000, method = 'log') {
+    const realMsg = msg.message || msg;
+    if (_throttle[realMsg]) {
+      clearTimeout(_throttle[realMsg]);
+    }
     const self = this;
-    return function() {
-      const key = this.toString();
-      self[_throttle[key].method](key);
-      delete _throttle[key];
-    }.bind(msg);
+    const line = this._getLastLine();
+    _throttle[realMsg] = setTimeout((function () {
+      self[this.method](msg);
+      delete _throttle[this.key];
+    }).bind({
+      method: method,
+      msg: Object.assign(typeof msg === 'string' ? {message: msg} : msg, {
+        suffix: 'Throttled - ' + line
+      }),
+      key: realMsg
+    }), timeout);
+  }
+
+  /**
+   * Shortcut to throttle debug.
+   * @param msg
+   * @param timeout
+   */
+  debugThrottle(msg, timeout) {
+    this.throttle(msg, timeout, 'debug');
+  }
+
+  /**
+   * Shortcut to throttle log.
+   * @param msg
+   * @param timeout
+   */
+  logThrottle(msg, timeout) {
+    this.throttle(msg, timeout, 'log');
+  }
+
+  /**
+   * Shortcut to throttle info.
+   * @param msg
+   * @param timeout
+   */
+  infoThrottle(msg, timeout) {
+    this.throttle(msg, timeout, 'info');
+  }
+
+  /**
+   * Shortcut to throttle debug.
+   * @param msg
+   * @param timeout
+   */
+  highlightThrottle(msg, timeout) {
+    this.throttle(msg, timeout, 'highlight');
+  }
+
+  /**
+   * Shortcut to throttle debug.
+   * @param msg
+   * @param timeout
+   */
+  warnThrottle(msg, timeout) {
+    this.throttle(msg, timeout, 'warn');
+  }
+
+  /**
+   * Shortcut to throttle error.
+   * @param msg
+   * @param timeout
+   */
+  errorThrottle(msg, timeout) {
+    this.throttle(msg, timeout, 'error');
+  }
+
+  /**
+   * Throttles assertion.
+   * @param {*} val The value to assert.
+   * @param timeout
+   */
+  assertThrottle(val, timeout) {
+    this.throttle('Assertion failed', timeout, 'assert');
   }
 
 }
 
 /**
- * Returns a new instance of the logger.
+ * Default instance of the logger file.
+ * @type {Logger}
  */
-Logger.logger = () => {
-  if (!this._logger) {
-    this._logger = new Logger();
-  }
-  return this._logger;
-};
+Logger.logger = new Logger();
 
 module.exports = Logger;
