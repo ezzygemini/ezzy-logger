@@ -10,8 +10,8 @@
   "dependencies": {
     "callsite": "^1.0.0",
     "cli-color": "^1.1.0",
-    "config-setup": "git@github.com:ezzygemini/config-setup.git#head",
-    "true-typeof": "git@github.com:ezzygemini/true-typeof.git#head",
+    "config-setup": "git@github.com:ezzygemini/config-setup.git",
+    "true-typeof": "git@github.com:ezzygemini/true-typeof.git",
     "path": "^0.12.7"
   }
 }
