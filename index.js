@@ -239,7 +239,7 @@ class Logger {
        *  getColumnNumber: function
        * }}
      */
-    const call = callsite().find(l => !/Logger\.js$/.test(l.getFileName()));
+    const call = callsite().find(l => !/index\.js$/.test(l.getFileName()));
     const fileName = path.basename(call.getFileName());
     const colNo = call.getColumnNumber();
     const lineNo = call.getLineNumber();
