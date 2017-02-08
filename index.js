@@ -18,4 +18,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module.exports = require('./src/Logger');
+/** @type {Logger} */
+const Logger = require('./src/Logger');
+module.exports = Logger;
+

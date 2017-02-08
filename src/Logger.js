@@ -80,6 +80,13 @@ class Logger {
      */
     this.LEVELS = LOG_LEVELS;
 
+    // Inform the debugging status.
+    console.log(
+      '[LOG] Logging level set to ' + this._level + ' | is ' +
+      (this.isDebugging ? '' : 'not') + ' debugging | is ' +
+      (this._silent ? '' : 'not') + ' silent'
+    );
+
   }
 
   /**
