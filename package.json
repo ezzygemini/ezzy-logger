@@ -11,14 +11,14 @@
     "test": "node node_modules/testing"
   },
   "dependencies": {
-    "argument": "git://github.com/ezzygemini/argument.git",
+    "argument": "ezzygemini/argument",
     "callsite": "^1.0.0",
     "cli-color": "^1.1.0",
-    "config-setup": "git://github.com/ezzygemini/config-setup.git",
-    "true-typeof": "git://github.com/ezzygemini/true-typeof.git",
+    "config-setup": "ezzygemini/config-setup",
+    "true-typeof": "ezzygemini/true-typeof",
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "testing": "git://github.com/ezzygemini/testing.git"
+    "testing": "ezzygemini/testing"
   }
 }
