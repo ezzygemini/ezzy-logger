@@ -401,7 +401,7 @@ class Logger {
     }
     const self = this;
     const line = this._getLastLine();
-    _throttle[realMsg] = setTimeout((function () {
+    _throttle[realMsg] = setTimeout((function() {
       self[this.method](msg);
       delete _throttle[this.key];
     }).bind({
@@ -481,6 +481,24 @@ class Logger {
    */
   assertThrottle(msg, timeout) {
     this.throttle(msg, timeout, 'assert');
+  }
+
+  /**
+   * Logs the output of an child_process.exec command.
+   * @param {Error} e Any errors that might have ocurred.
+   * @param {Buffer} stdout The output of the exec command.
+   * @param {Buffer} stderr The error of the exec command.
+   */
+  fromExec(e, stdout, stderr) {
+    if (e) {
+      Logger.logger.error(e);
+    }
+    if (stdout) {
+      Logger.logger.debug(stdout);
+    }
+    if (stderr) {
+      Logger.logger.error(stderr);
+    }
   }
 
 }
