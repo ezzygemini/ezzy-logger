@@ -1,4 +1,5 @@
 const logger = require('./Logger').logger;
+const exec = require('child_process').exec;
 
 describe('Logger', () => {
 
@@ -20,6 +21,16 @@ describe('Logger', () => {
     expect(logger.error('asdf')[0]).toBe('asdf');
     expect(logger.log('asdf')[0]).toBe('asdf');
     logger.talk();
+  });
+
+  it('should log proper information from an exec command', done => {
+    spyOn(logger, 'fromExec');
+    exec('ls', logger.fromExec);
+    exec('ls', () => {
+      expect(logger.fromExec)
+        .toHaveBeenCalledWith(null, jasmine.anything(), '');
+      done();
+    });
   });
 
 });
