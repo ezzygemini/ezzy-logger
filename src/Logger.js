@@ -138,6 +138,7 @@ class Logger {
       {
         title: '',
         message: '',
+        msg: null,
         data: null,
         type: '',
         color: debugColor,
@@ -150,7 +151,9 @@ class Logger {
         paddingTop: 0,
         borderTop: 0,
         borderBottom: 0,
-        borderChar: '-'
+        borderChar: '-',
+        ts: false,
+        timestamp: false
       },
       args,
       ['message:error'],
@@ -161,6 +164,8 @@ class Logger {
     const indentation = new Array(config.indent).join(' ');
     let i;
     let border;
+
+    config.message = config.message || config.msg;
 
     if (trueTypeOf(config.message) === 'error') {
       config.message = config.message.message;
@@ -198,6 +203,10 @@ class Logger {
       config.message += clc.blackBright(` (${config.suffix})`);
     } else if (config.suffix) {
       config.message += clc.blackBright(` (${this._getLastLine()})`);
+    }
+
+    if (config.ts || config.timestamp) {
+      config.message += clc.blackBright(` > ${new Date().getTime()}`);
     }
 
     if (config.color) {
@@ -401,7 +410,7 @@ class Logger {
     }
     const self = this;
     const line = this._getLastLine();
-    _throttle[realMsg] = setTimeout((function() {
+    _throttle[realMsg] = setTimeout((function () {
       self[this.method](msg);
       delete _throttle[this.key];
     }).bind({
