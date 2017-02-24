@@ -410,7 +410,7 @@ class Logger {
     }
     const self = this;
     const line = this._getLastLine();
-    _throttle[realMsg] = setTimeout((function () {
+    _throttle[realMsg] = setTimeout((function() {
       self[this.method](msg);
       delete _throttle[this.key];
     }).bind({
