@@ -38,6 +38,18 @@ describe('Logger', () => {
     expect(logger.assert(1, true, [])).toBe(true);
     expect(logger.assert(5, 6, undefined)).toBe(false);
     expect(logger.assert(0, 1, 2, 3, 4)).toBe(false);
+    expect(logger.assertType([], 'array')).toBe(true);
+    expect(logger.assertType({}, 'object')).toBe(true);
+    expect(logger.assertType(12, 'number')).toBe(true);
+    expect(logger.assertType(false, 'boolean')).toBe(true);
+    expect(logger.assertGreaterThan(2, 1)).toBe(true);
+    expect(logger.assertGreaterThan(1, 2)).toBe(false);
+    expect(logger.assertLessThan(2, 1)).toBe(false);
+    expect(logger.assertLessThan(1, 2)).toBe(true);
+    expect(logger.assertLength([])).toBe(false);
+    expect(logger.assertLength([1])).toBe(true);
+    expect(logger.assertLength('asdf')).toBe(true);
+    expect(logger.assertLength('')).toBe(false);
     done();
   });
 

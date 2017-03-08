@@ -400,6 +400,109 @@ class Logger {
   }
 
   /**
+   * Asserts that 2 values are equal.
+   * @param {*} a The first value.
+   * @param {*} b The second value.
+   * @returns {boolean}
+   */
+  assertEqual(a, b){
+    if(a !== b){
+      if(!this._silent && this._level >= ERROR_LEVEL){
+        Logger._concat
+          .call(this, 'AST', 'red', 'Assertion Failed: Values not equal');
+      }
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Asserts that value a is greater than value b.
+   * @param {*} a The first value.
+   * @param {*} b The second value.
+   * @returns {boolean}
+   */
+  assertGreaterThan(a, b){
+    if(a <= b){
+      if(!this._silent && this._level >= ERROR_LEVEL){
+        Logger._concat
+          .call(this, 'AST', 'red', 'Assertion Failed: Value is not greater');
+      }
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Asserts that value a is less than value b.
+   * @param {*} a The first value.
+   * @param {*} b The second value.
+   * @returns {boolean}
+   */
+  assertLessThan(a, b){
+    if(a >= b){
+      if(!this._silent && this._level >= ERROR_LEVEL){
+        Logger._concat
+          .call(this, 'AST', 'red', 'Assertion Failed: Value is not smaller');
+      }
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Asserts that 2 values are not equal.
+   * @param {*} a The first value.
+   * @param {*} b The second value.
+   * @returns {boolean}
+   */
+  assertNotEqual(a, b){
+    if(a === b){
+      if(!this._silent && this._level >= ERROR_LEVEL){
+        Logger._concat
+          .call(this, 'AST', 'red', 'Assertion Failed: Values are equal');
+      }
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Asserts that the values has a length (array/string).
+   * @param {string|[]} val The first value.
+   * @returns {boolean}
+   */
+  assertLength(...val){
+    for(let i = 0; i < val.length; i++){
+      if(!val[i].length){
+        if(!this._silent && this._level >= ERROR_LEVEL){
+          Logger._concat
+            .call(this, 'AST', 'red', 'Assertion Failed: Value has no length.');
+        }
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Asserts that a value is a type.
+   * @param {*} value A value to assert.
+   * @param {string} type The true type of the value.
+   * @returns {boolean}
+   */
+  assertType(value, type){
+    if(trueTypeOf(value) !== type){
+      if(!this._silent && this._level >= ERROR_LEVEL){
+        Logger._concat
+          .call(this, 'AST', 'red', 'Assertion Failed: Values is not ' + type);
+      }
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Throttles a message to be logged and logs it once.
    * @param msg
    * @param timeout
