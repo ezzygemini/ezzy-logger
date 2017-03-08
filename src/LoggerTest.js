@@ -50,6 +50,8 @@ describe('Logger', () => {
     expect(logger.assertLength([1])).toBe(true);
     expect(logger.assertLength('asdf')).toBe(true);
     expect(logger.assertLength('')).toBe(false);
+    expect(logger.assertEqual(2,2)).toBe(true);
+    expect(logger.assertEqual(2,1)).toBe(false);
     done();
   });
 
