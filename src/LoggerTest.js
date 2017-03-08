@@ -3,6 +3,9 @@ const exec = require('child_process').exec;
 
 describe('Logger', () => {
 
+  beforeEach(() => logger.silence());
+  afterEach(() => logger.talk());
+
   it('should log properly', () => {
     expect(logger.debug).toBeDefined();
     expect(logger.highlight).toBeDefined();
@@ -13,14 +16,11 @@ describe('Logger', () => {
   });
 
   it('should return the same arguments passed to the methods', () => {
-    logger.silence();
     expect(logger.debug('asdf')[0]).toBe('asdf');
     expect(logger.highlight('asdf')[0]).toBe('asdf');
-    expect(logger.assert('asdf')[0]).toBe('asdf');
     expect(logger.warn('asdf')[0]).toBe('asdf');
     expect(logger.error('asdf')[0]).toBe('asdf');
     expect(logger.log('asdf')[0]).toBe('asdf');
-    logger.talk();
   });
 
   it('should log proper information from an exec command', done => {
@@ -31,6 +31,14 @@ describe('Logger', () => {
         .toHaveBeenCalledWith(null, jasmine.anything(), '');
       done();
     });
+  });
+
+  it('should assert all values properly', done => {
+    expect(logger.assert({})).toBe(true);
+    expect(logger.assert(1, true, [])).toBe(true);
+    expect(logger.assert(5, 6, undefined)).toBe(false);
+    expect(logger.assert(0, 1, 2, 3, 4)).toBe(false);
+    done();
   });
 
 });

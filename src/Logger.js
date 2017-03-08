@@ -384,17 +384,19 @@ class Logger {
 
   /**
    * Shortcut to assertion.
-   * @param {*} val Value to assert.
-   * @param {string=} msg The message to display.
-   * @returns {Arguments}
+   * @param {*} val Values to assert.
+   * @returns {boolean}
    */
-  assert(val, msg) {
-    if (!this._silent && this._level >= ERROR_LEVEL) {
-      if (!val) {
-        Logger._concat.call(this, 'AST', 'red', [msg || 'Assertion Failed']);
+  assert(...val) {
+    for(let i = 0; i < val.length; i++){
+      if(!val[i]){
+        if(!this._silent && this._level >= ERROR_LEVEL){
+          Logger._concat.call(this, 'AST', 'red', 'Assertion Failed');
+        }
+        return false;
       }
     }
-    return arguments;
+    return true;
   }
 
   /**
