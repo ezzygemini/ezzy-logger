@@ -157,6 +157,8 @@ class Logger {
       },
       args,
       ['message:error'],
+      ['title:string', 'message'],
+      ['title:string', 'message', 'data'],
       ['this:object'],
       ['message:string'],
       ['message:function']
