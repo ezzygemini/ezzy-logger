@@ -153,7 +153,8 @@ class Logger {
         borderBottom: 0,
         borderChar: '-',
         ts: false,
-        timestamp: false
+        timestamp: false,
+        muted: false
       },
       args,
       ['message:error'],
@@ -211,7 +212,9 @@ class Logger {
       config.message += clc.blackBright(` > ${new Date().getTime()}`);
     }
 
-    if (config.color) {
+    if (config.muted) {
+      config.message = clc.blackBright(config.message);
+    } else if (config.color) {
       config.message = clc[config.color](config.message);
     }
 
@@ -390,9 +393,9 @@ class Logger {
    * @returns {boolean}
    */
   assert(...val) {
-    for(let i = 0; i < val.length; i++){
-      if(!val[i]){
-        if(!this._silent && this._level >= ERROR_LEVEL){
+    for (let i = 0; i < val.length; i++) {
+      if (!val[i]) {
+        if (!this._silent && this._level >= ERROR_LEVEL) {
           Logger._concat.call(this, 'AST', 'red', 'Assertion Failed');
         }
         return false;
@@ -407,9 +410,9 @@ class Logger {
    * @param {*} b The second value.
    * @returns {boolean}
    */
-  assertEqual(a, b){
-    if(a !== b){
-      if(!this._silent && this._level >= ERROR_LEVEL){
+  assertEqual(a, b) {
+    if (a !== b) {
+      if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger._concat
           .call(this, 'AST', 'red', 'Assertion Failed: Values not equal');
       }
@@ -424,9 +427,9 @@ class Logger {
    * @param {*} b The second value.
    * @returns {boolean}
    */
-  assertGreaterThan(a, b){
-    if(a <= b){
-      if(!this._silent && this._level >= ERROR_LEVEL){
+  assertGreaterThan(a, b) {
+    if (a <= b) {
+      if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger._concat
           .call(this, 'AST', 'red', 'Assertion Failed: Value is not greater');
       }
@@ -441,9 +444,9 @@ class Logger {
    * @param {*} b The second value.
    * @returns {boolean}
    */
-  assertLessThan(a, b){
-    if(a >= b){
-      if(!this._silent && this._level >= ERROR_LEVEL){
+  assertLessThan(a, b) {
+    if (a >= b) {
+      if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger._concat
           .call(this, 'AST', 'red', 'Assertion Failed: Value is not smaller');
       }
@@ -458,9 +461,9 @@ class Logger {
    * @param {*} b The second value.
    * @returns {boolean}
    */
-  assertNotEqual(a, b){
-    if(a === b){
-      if(!this._silent && this._level >= ERROR_LEVEL){
+  assertNotEqual(a, b) {
+    if (a === b) {
+      if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger._concat
           .call(this, 'AST', 'red', 'Assertion Failed: Values are equal');
       }
@@ -474,10 +477,10 @@ class Logger {
    * @param {string|[]} val The first value.
    * @returns {boolean}
    */
-  assertLength(...val){
-    for(let i = 0; i < val.length; i++){
-      if(!val[i].length){
-        if(!this._silent && this._level >= ERROR_LEVEL){
+  assertLength(...val) {
+    for (let i = 0; i < val.length; i++) {
+      if (!val[i].length) {
+        if (!this._silent && this._level >= ERROR_LEVEL) {
           Logger._concat
             .call(this, 'AST', 'red', 'Assertion Failed: Value has no length.');
         }
@@ -493,9 +496,9 @@ class Logger {
    * @param {string} type The true type of the value.
    * @returns {boolean}
    */
-  assertType(value, type){
-    if(trueTypeOf(value) !== type){
-      if(!this._silent && this._level >= ERROR_LEVEL){
+  assertType(value, type) {
+    if (trueTypeOf(value) !== type) {
+      if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger._concat
           .call(this, 'AST', 'red', 'Assertion Failed: Values is not ' + type);
       }
