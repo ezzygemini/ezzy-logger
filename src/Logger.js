@@ -1,30 +1,11 @@
-/*!
- * Copyright (c) 2016 Moises Romero
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 const LOG_LEVELS = [
   'error',
   'warn',
   'highlight',
   'info',
   'log',
-  'debug'
+  'debug',
+  'deepDebug'
 ];
 const argument = require('argument');
 const path = require('path');
@@ -35,6 +16,7 @@ const DEBUG_LEVEL = LOG_LEVELS.indexOf('debug');
 const INFO_LEVEL = LOG_LEVELS.indexOf('info');
 const LOG_LEVEL = LOG_LEVELS.indexOf('log');
 const HIGHLIGHT_LEVEL = LOG_LEVELS.indexOf('highlight');
+const DEEP_DEBUG_LEVEL = LOG_LEVELS.indexOf('deepDebug');
 const WARN_LEVEL = LOG_LEVELS.indexOf('warn');
 const ERROR_LEVEL = LOG_LEVELS.indexOf('error');
 const trueTypeOf = require('true-typeof');
@@ -130,9 +112,8 @@ class Logger {
    * @param {String} logType The log type.
    * @param {String} debugColor Color to use for the console.
    * @param {Arguments} args The arguments to check as configuration.
-   * @private
    */
-  static _concat(logType, debugColor, args) {
+  static doLog(logType, debugColor, args) {
 
     const config = configSetup(
       {
@@ -316,7 +297,7 @@ class Logger {
    */
   highlight() {
     if (!this._silent && this._level >= HIGHLIGHT_LEVEL) {
-      Logger._concat.call(this, 'HGH', 'yellowBright', arguments);
+      Logger.doLog.call(this, 'HGH', 'yellowBright', arguments);
     }
     return arguments;
   }
@@ -327,7 +308,18 @@ class Logger {
    */
   debug() {
     if (!this._silent && this.isDebugging) {
-      Logger._concat.call(this, 'DBG', 'magenta', arguments);
+      Logger.doLog.call(this, 'DBG', 'magenta', arguments);
+    }
+    return arguments;
+  }
+
+  /**
+   * Sends a deep debug log into the console.
+   * @returns {Arguments}
+   */
+  deepDebug() {
+    if (!this._silent && this._level >= DEEP_DEBUG_LEVEL) {
+      Logger.doLog.call(this, 'DBG', 'blackBright', arguments);
     }
     return arguments;
   }
@@ -338,7 +330,7 @@ class Logger {
    */
   info() {
     if (!this._silent && this._level >= INFO_LEVEL) {
-      Logger._concat.call(this, 'INF', null, arguments);
+      Logger.doLog.call(this, 'INF', null, arguments);
     }
     return arguments;
   }
@@ -349,7 +341,7 @@ class Logger {
    */
   log() {
     if (!this._silent && this._level >= LOG_LEVEL) {
-      Logger._concat.call(this, 'LOG', null, arguments);
+      Logger.doLog.call(this, 'LOG', null, arguments);
     }
     return arguments;
   }
@@ -360,7 +352,7 @@ class Logger {
    */
   warn() {
     if (!this._silent && this._level >= WARN_LEVEL) {
-      Logger._concat.call(this, 'WRN', 'yellow', arguments);
+      Logger.doLog.call(this, 'WRN', 'yellow', arguments);
     }
     return arguments;
   }
@@ -371,7 +363,7 @@ class Logger {
    */
   error() {
     if (!this._silent && this._level >= ERROR_LEVEL) {
-      Logger._concat.call(this, 'ERR', 'red', arguments);
+      Logger.doLog.call(this, 'ERR', 'red', arguments);
     }
     return arguments;
   }
@@ -382,7 +374,7 @@ class Logger {
    */
   fatal() {
     if (!this._silent) {
-      Logger._concat.call(this, 'ERR', 'red', arguments);
+      Logger.doLog.call(this, 'ERR', 'red', arguments);
     }
     throw new TypeError(args[0]);
   }
@@ -396,7 +388,7 @@ class Logger {
     for (let i = 0; i < val.length; i++) {
       if (!val[i]) {
         if (!this._silent && this._level >= ERROR_LEVEL) {
-          Logger._concat.call(this, 'AST', 'red', 'Assertion Failed');
+          Logger.doLog.call(this, 'AST', 'red', 'Assertion Failed');
         }
         return false;
       }
@@ -413,7 +405,7 @@ class Logger {
   assertEqual(a, b) {
     if (a !== b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger._concat
+        Logger.doLog
           .call(this, 'AST', 'red', 'Assertion Failed: Values not equal');
       }
       return false;
@@ -430,7 +422,7 @@ class Logger {
   assertGreaterThan(a, b) {
     if (a <= b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger._concat
+        Logger.doLog
           .call(this, 'AST', 'red', 'Assertion Failed: Value is not greater');
       }
       return false;
@@ -447,7 +439,7 @@ class Logger {
   assertLessThan(a, b) {
     if (a >= b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger._concat
+        Logger.doLog
           .call(this, 'AST', 'red', 'Assertion Failed: Value is not smaller');
       }
       return false;
@@ -464,7 +456,7 @@ class Logger {
   assertNotEqual(a, b) {
     if (a === b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger._concat
+        Logger.doLog
           .call(this, 'AST', 'red', 'Assertion Failed: Values are equal');
       }
       return false;
@@ -481,7 +473,7 @@ class Logger {
     for (let i = 0; i < val.length; i++) {
       if (!val[i].length) {
         if (!this._silent && this._level >= ERROR_LEVEL) {
-          Logger._concat
+          Logger.doLog
             .call(this, 'AST', 'red', 'Assertion Failed: Value has no length.');
         }
         return false;
@@ -499,7 +491,7 @@ class Logger {
   assertType(value, type) {
     if (trueTypeOf(value) !== type) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger._concat
+        Logger.doLog
           .call(this, 'AST', 'red', 'Assertion Failed: Values is not ' + type);
       }
       return false;
@@ -514,21 +506,22 @@ class Logger {
    * @param method
    */
   throttle(msg, timeout = 1000, method = 'log') {
-    const realMsg = msg.message || msg;
-    if (_throttle[realMsg]) {
-      clearTimeout(_throttle[realMsg]);
+    const key = method + (msg.message || msg);
+    if (_throttle[key]) {
+      clearTimeout(_throttle[key]);
+    } else {
+      this[method](msg);
     }
     const self = this;
-    const line = this._getLastLine();
-    _throttle[realMsg] = setTimeout((function() {
-      self[this.method](msg);
+    _throttle[key] = setTimeout(function() {
+      self[this.method](Object.assign(this.msg, {
+        suffix: 'Throttled - ' + self._getLastLine()
+      }));
       delete _throttle[this.key];
-    }).bind({
+    }.bind({
+      key,
       method: method,
-      msg: Object.assign(typeof msg === 'string' ? {message: msg} : msg, {
-        suffix: 'Throttled - ' + line
-      }),
-      key: realMsg
+      msg: typeof msg === 'string' ? {message: msg} : msg
     }), timeout);
   }
 
@@ -540,6 +533,16 @@ class Logger {
    */
   debugThrottle(msg, timeout) {
     this.throttle(msg, timeout, 'debug');
+  }
+
+  /**
+   * Shortcut to throttle deep debug.
+   * @param msg
+   * @param timeout
+   * @returns void
+   */
+  deepDebugThrottle(msg, timeout) {
+    this.throttle(msg, timeout, 'deepDebug');
   }
 
   /**
@@ -590,16 +593,6 @@ class Logger {
    */
   errorThrottle(msg, timeout) {
     this.throttle(msg, timeout, 'error');
-  }
-
-  /**
-   * Throttles assertion.
-   * @param msg
-   * @param timeout
-   * @returns void
-   */
-  assertThrottle(msg, timeout) {
-    this.throttle(msg, timeout, 'assert');
   }
 
   /**
