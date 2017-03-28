@@ -8,6 +8,7 @@ const LOG_LEVELS = [
   'deepDebug'
 ];
 const argument = require('argument');
+const DEFAULT_LEVEL = argument(['LOG_LEVEL', 'NODE_LOG_LEVEL'], 'info');
 const path = require('path');
 const callsite = require('callsite');
 const clc = require('cli-color');
@@ -36,9 +37,11 @@ const _throttle = {};
  */
 class Logger {
 
-  constructor() {
-
-    const defaultLevel = argument(['LOG_LEVEL', 'NODE_LOG_LEVEL'], 'info');
+  /**
+   * @param {string|number} level The default start level.
+   * @param {boolean} silent If the logger should start silent.
+   */
+  constructor(level = DEFAULT_LEVEL, silent = false) {
 
     /**
      * Indicates if we should be silent.
@@ -46,7 +49,7 @@ class Logger {
      * @type {boolean}
      * @private
      */
-    this._silent = false;
+    this._silent = silent;
 
     /**
      * The level of logging.
@@ -54,7 +57,7 @@ class Logger {
      * @type {string}
      * @private
      */
-    this._level = LOG_LEVELS.indexOf(defaultLevel);
+    this._level = LOG_LEVELS.indexOf(level);
 
     /**
      * The levels of logging.
@@ -81,6 +84,16 @@ class Logger {
     }
     defaultInstance = new Logger();
     return defaultInstance;
+  }
+
+  /**
+   * Obtains a new instance of the logger.
+   * @param {string|number=} level The initial level of the logger.
+   * @param {boolean=} silent If the logger should start silent.
+   * @returns {Logger}
+   */
+  static getLogger(level, silent) {
+    return new Logger(level, silent);
   }
 
   /**

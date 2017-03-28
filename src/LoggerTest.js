@@ -4,10 +4,7 @@ let logger;
 
 describe('Logger', () => {
 
-  beforeEach(() => {
-    logger = new Logger();
-    logger.silence();
-  });
+  beforeEach(() => logger = Logger.getLogger('debug', true));
 
   it('should display if it is debugging', done => {
     expect(logger.isDebugging).toBe(true);
@@ -48,6 +45,10 @@ describe('Logger', () => {
   });
 
   it('should log properly', () => {
+    expect(Logger.getLogger() instanceof Logger).toBe(true);
+    expect(Logger.logger instanceof Logger).toBe(true);
+    expect(logger._getLastLine()).toContain('LoggerTest');
+    expect(logger.LEVELS).toEqual(jasmine.arrayContaining(['info']));
     expect(logger.debug).toBeDefined();
     expect(logger.deepDebug).toBeDefined();
     expect(logger.highlight).toBeDefined();
@@ -157,6 +158,7 @@ describe('Logger', () => {
     expect(logger.assertEqual(2,2)).toBe(true);
     expect(logger.assertEqual(2,1)).toBe(false);
     expect(logger.assertNotEqual(2,1)).toBe(true);
+    expect(logger.assertNotEqual(2,2)).toBe(false);
     done();
   });
 
