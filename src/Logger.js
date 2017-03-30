@@ -402,7 +402,7 @@ class Logger {
       if (!val[i]) {
         if (!this._silent && this._level >= ERROR_LEVEL) {
           Logger.doLog.call(this, 'AST', 'red',
-            `Assertion Failed: Value '${val[i]}' is falsy`);
+            [`Assertion Failed: Value '${val[i]}' is falsy`]);
         }
         return false;
       }
@@ -420,7 +420,7 @@ class Logger {
     if (a !== b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger.doLog.call(this, 'AST', 'red',
-          `Assertion Failed: Value ${a} is not equal to ${b}`);
+          [`Assertion Failed: Value ${a} is not equal to ${b}`]);
       }
       return false;
     }
@@ -437,7 +437,7 @@ class Logger {
     if (a <= b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger.doLog.call(this, 'AST', 'red',
-          `Assertion Failed: Value ${a} is not greater than ${b}`);
+          [`Assertion Failed: Value ${a} is not greater than ${b}`]);
       }
       return false;
     }
@@ -455,7 +455,7 @@ class Logger {
       if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger.doLog
           .call(this, 'AST', 'red',
-            `Assertion Failed: Value ${a} is not smaller than ${b}`);
+            [`Assertion Failed: Value ${a} is not smaller than ${b}`]);
       }
       return false;
     }
@@ -473,7 +473,7 @@ class Logger {
       if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger.doLog
           .call(this, 'AST', 'red',
-            `Assertion Failed: Value ${a} is not equal to ${b}`);
+            [`Assertion Failed: Value '${val[i]}' has no length`]);
       }
       return false;
     }
@@ -491,7 +491,7 @@ class Logger {
         if (!this._silent && this._level >= ERROR_LEVEL) {
           Logger.doLog
             .call(this, 'AST', 'red',
-              `Assertion Failed: Value '${val[i]}' has no length`);
+              [`Assertion Failed: Value '${val[i]}' has no length`]);
         }
         return false;
       }
@@ -510,7 +510,7 @@ class Logger {
       if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger.doLog
           .call(this, 'AST', 'red',
-            `Assertion Failed: Value ${value} is not ${type}`);
+            [`Assertion Failed: Value ${value} is not ${type}`]);
       }
       return false;
     }
