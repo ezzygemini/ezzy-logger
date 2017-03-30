@@ -152,11 +152,11 @@ class Logger {
       },
       args,
       ['message:error'],
+      ['message:string'],
+      ['message:function'],
       ['title:string', 'message'],
       ['title:string', 'message', 'data'],
-      ['this:object'],
-      ['message:string'],
-      ['message:function']
+      ['this:object']
     );
     const indentation = new Array(config.indent).join(' ');
     let i;
@@ -401,7 +401,8 @@ class Logger {
     for (let i = 0; i < val.length; i++) {
       if (!val[i]) {
         if (!this._silent && this._level >= ERROR_LEVEL) {
-          Logger.doLog.call(this, 'AST', 'red', 'Assertion Failed');
+          Logger.doLog.call(this, 'AST', 'red',
+            `Assertion Failed: Value '${val[i]}' is falsy`);
         }
         return false;
       }
@@ -418,8 +419,8 @@ class Logger {
   assertEqual(a, b) {
     if (a !== b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger.doLog
-          .call(this, 'AST', 'red', 'Assertion Failed: Values not equal');
+        Logger.doLog.call(this, 'AST', 'red',
+          `Assertion Failed: Value ${a} is not equal to ${b}`);
       }
       return false;
     }
@@ -435,8 +436,8 @@ class Logger {
   assertGreaterThan(a, b) {
     if (a <= b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger.doLog
-          .call(this, 'AST', 'red', 'Assertion Failed: Value is not greater');
+        Logger.doLog.call(this, 'AST', 'red',
+          `Assertion Failed: Value ${a} is not greater than ${b}`);
       }
       return false;
     }
@@ -453,7 +454,8 @@ class Logger {
     if (a >= b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger.doLog
-          .call(this, 'AST', 'red', 'Assertion Failed: Value is not smaller');
+          .call(this, 'AST', 'red',
+            `Assertion Failed: Value ${a} is not smaller than ${b}`);
       }
       return false;
     }
@@ -470,7 +472,8 @@ class Logger {
     if (a === b) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger.doLog
-          .call(this, 'AST', 'red', 'Assertion Failed: Values are equal');
+          .call(this, 'AST', 'red',
+            `Assertion Failed: Value ${a} is not equal to ${b}`);
       }
       return false;
     }
@@ -487,7 +490,8 @@ class Logger {
       if (!val[i].length) {
         if (!this._silent && this._level >= ERROR_LEVEL) {
           Logger.doLog
-            .call(this, 'AST', 'red', 'Assertion Failed: Value has no length.');
+            .call(this, 'AST', 'red',
+              `Assertion Failed: Value '${val[i]}' has no length`);
         }
         return false;
       }
@@ -505,7 +509,8 @@ class Logger {
     if (trueTypeOf(value) !== type) {
       if (!this._silent && this._level >= ERROR_LEVEL) {
         Logger.doLog
-          .call(this, 'AST', 'red', 'Assertion Failed: Values is not ' + type);
+          .call(this, 'AST', 'red',
+            `Assertion Failed: Value ${value} is not ${type}`);
       }
       return false;
     }
