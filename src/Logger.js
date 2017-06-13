@@ -242,7 +242,7 @@ class Logger {
       }
     }
 
-    if (config.borderTop) {
+    if (config.borderBottom) {
       console.log(border);
     }
 
