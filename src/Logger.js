@@ -236,6 +236,10 @@ class Logger {
 
     console.log(indentation + config.message);
 
+    if (config.message.stack) {
+      console.log(config.message.stack);
+    }
+
     if (config.paddingBottom) {
       for (i = 0; i < config.paddingBottom; i++) {
         console.log('');
@@ -531,7 +535,7 @@ class Logger {
       this[method](msg);
     }
     const self = this;
-    _throttle[key] = setTimeout(function() {
+    _throttle[key] = setTimeout(function () {
       self[this.method](Object.assign(this.msg, {
         suffix: 'Throttled - ' + self._getLastLine()
       }));
