@@ -177,7 +177,7 @@ class Logger {
     }
 
     if (config.data) {
-      config.message += JSON.stringify(config.data);
+      config.message += ' ' + JSON.stringify(config.data);
     }
 
     if (config.message === '') {
