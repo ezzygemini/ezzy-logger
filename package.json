@@ -14,9 +14,9 @@
     "argument": "ezzygemini/argument",
     "callsite": "^1.0.0",
     "cli-color": "^1.1.0",
-    "config-setup": "ezzygemini/config-setup",
-    "true-typeof": "ezzygemini/true-typeof",
-    "path": "^0.12.7"
+    "config-setup": "github:ezzygemini/config-setup",
+    "path": "^0.12.7",
+    "true-typeof": "ezzygemini/true-typeof"
   },
   "devDependencies": {
     "testing": "ezzygemini/testing"
