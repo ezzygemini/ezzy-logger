@@ -148,7 +148,8 @@ class Logger {
         borderChar: '-',
         ts: false,
         timestamp: false,
-        muted: false
+        muted: false,
+        stack: null
       },
       args,
       ['message:error'],
@@ -165,6 +166,7 @@ class Logger {
     config.message = config.message || config.msg;
 
     if (trueTypeOf(config.message) === 'error') {
+      config.stack = config.message.stack;
       config.message = config.message.message;
     }
 
@@ -236,8 +238,8 @@ class Logger {
 
     console.log(indentation + config.message);
 
-    if (config.message.stack) {
-      console.log(config.message.stack);
+    if (config.stack) {
+      console.log(clc[config.color](config.stack));
     }
 
     if (config.paddingBottom) {
