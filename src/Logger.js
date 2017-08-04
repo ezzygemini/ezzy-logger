@@ -66,12 +66,13 @@ class Logger {
     this.LEVELS = LOG_LEVELS;
 
     // Inform the debugging status.
-    console.log(
-      '[LOG] Logging level set to ' + this._level + ' | is ' +
-      (this.isDebugging ? '' : 'not') + ' debugging | is ' +
-      (this._silent ? '' : 'not') + ' silent'
-    );
-
+    if (!process.env.HIDE_ARGUMENTS) {
+      console.log(
+        '[LOG] Logging level set to ' + this._level + ' | is ' +
+        (this.isDebugging ? '' : 'not') + ' debugging | is ' +
+        (this._silent ? '' : 'not') + ' silent'
+      );
+    }
   }
 
   /**
@@ -101,8 +102,10 @@ class Logger {
    * @param {*} level The new level
    */
   set level(level) {
-    console.log(clc.magentaBright
-      .bold(`[LOG] Requested logging level to change to '${level}'`));
+    if(!process.env.HIDE_ARGUMENTS) {
+      console.log(clc.magentaBright
+        .bold(`[LOG] Requested logging level to change to '${level}'`));
+    }
     if (isNaN(level)) {
       const index = LOG_LEVELS.indexOf(level);
       this._level = index > -1 ? index : 0;
@@ -515,7 +518,7 @@ class Logger {
       this[method](msg);
     }
     const self = this;
-    _throttle[key] = setTimeout(function () {
+    _throttle[key] = setTimeout(function() {
       self[this.method](Object.assign(this.msg, {
         suffix: 'Throttled - ' + self._getLastLine()
       }));
