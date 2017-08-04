@@ -391,9 +391,9 @@ class Logger {
    * Sends a fatal log into the console and throws a new error.
    * @throws {TypeError}
    */
-  fatal() {
+  fatal(...args) {
     if (!this._silent) {
-      Logger.doLog.call(this, 'ERR', 'red', arguments);
+      Logger.doLog('ERR', 'red', ...args);
     }
     throw new TypeError(args[0]);
   }
@@ -424,10 +424,7 @@ class Logger {
    */
   assertEqual(a, b) {
     if (a !== b) {
-      if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger.doLog.call(this, 'AST', 'red',
-          [`Assertion Failed: Value ${a} is not equal to ${b}`]);
-      }
+      this.warn(`Assertion Failed: Value ${a} is not equal to ${b}`);
       return false;
     }
     return true;
@@ -441,10 +438,7 @@ class Logger {
    */
   assertGreaterThan(a, b) {
     if (a <= b) {
-      if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger.doLog.call(this, 'AST', 'red',
-          [`Assertion Failed: Value ${a} is not greater than ${b}`]);
-      }
+      this.warn(`Assertion Failed: Value ${a} is not greater than ${b}`);
       return false;
     }
     return true;
@@ -458,11 +452,7 @@ class Logger {
    */
   assertLessThan(a, b) {
     if (a >= b) {
-      if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger.doLog
-          .call(this, 'AST', 'red',
-            [`Assertion Failed: Value ${a} is not smaller than ${b}`]);
-      }
+      this.warn(`Assertion Failed: Value ${a} is not smaller than ${b}`);
       return false;
     }
     return true;
@@ -476,11 +466,7 @@ class Logger {
    */
   assertNotEqual(a, b) {
     if (a === b) {
-      if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger.doLog
-          .call(this, 'AST', 'red',
-            [`Assertion Failed: Value '${val[i]}' has no length`]);
-      }
+      this.warn(`Assertion Failed: Value '${a}' is equal to '${b}'`);
       return false;
     }
     return true;
@@ -494,11 +480,7 @@ class Logger {
   assertLength(...val) {
     for (let i = 0; i < val.length; i++) {
       if (!val[i].length) {
-        if (!this._silent && this._level >= ERROR_LEVEL) {
-          Logger.doLog
-            .call(this, 'AST', 'red',
-              [`Assertion Failed: Value '${val[i]}' has no length`]);
-        }
+        this.warn(`Assertion Failed: Value '${val[i]}' has no length`);
         return false;
       }
     }
@@ -513,11 +495,7 @@ class Logger {
    */
   assertType(value, type) {
     if (trueTypeOf(value) !== type) {
-      if (!this._silent && this._level >= ERROR_LEVEL) {
-        Logger.doLog
-          .call(this, 'AST', 'red',
-            [`Assertion Failed: Value ${value} is not ${type}`]);
-      }
+      this.warn(`Assertion Failed: Value ${value} is not ${type}`);
       return false;
     }
     return true;

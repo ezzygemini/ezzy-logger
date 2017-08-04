@@ -30,7 +30,7 @@ describe('Logger', () => {
   });
 
   it('should throw a fatal error', done => {
-    expect(() => { logger.fatal('hi'); }).toThrow();
+    expect(() => { logger.fatal('hi'); }).toThrow(new TypeError('hi'));
     done();
   });
 
@@ -159,6 +159,31 @@ describe('Logger', () => {
     expect(logger.assertEqual(2,1)).toBe(false);
     expect(logger.assertNotEqual(2,1)).toBe(true);
     expect(logger.assertNotEqual(2,2)).toBe(false);
+    done();
+  });
+
+  it('should instantiate a new logger properly', done => {
+    const log = Logger.getLogger();
+    spyOn(log, 'warn');
+    log.warn({
+      title: 'Some Title',
+      message: 'Some Message',
+      data: {},
+      color: 'green',
+      indent: 1,
+      suffix: true,
+      marginTop: 1,
+      marginBottom: 1,
+      paddingBottom: 1,
+      paddingTop: 1,
+      borderTop: 1,
+      borderBottom: 1,
+      borderChar: '-',
+      ts: true,
+      timestamp: true,
+      muted: false
+    });
+    expect(log.warn).toHaveBeenCalled();
     done();
   });
 
