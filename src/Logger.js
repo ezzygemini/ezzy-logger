@@ -409,10 +409,7 @@ class Logger {
   assert(...val) {
     for (let i = 0; i < val.length; i++) {
       if (!val[i]) {
-        if (!this._silent && this._level >= ERROR_LEVEL) {
-          Logger.doLog.call(this, 'AST', 'red',
-            [`Assertion Failed: Value '${val[i]}' is falsy`]);
-        }
+        this.warn(`Assertion Failed: Value '${val[i]}' is falsy`);
         return false;
       }
     }

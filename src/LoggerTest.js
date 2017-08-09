@@ -6,6 +6,11 @@ describe('Logger', () => {
 
   beforeEach(() => logger = Logger.getLogger('debug', true));
 
+  it('should only invoke one instance of logger', done => {
+    expect(Logger.logger).toBe(Logger.logger);
+    done();
+  });
+
   it('should display if it is debugging', done => {
     expect(logger.isDebugging).toBe(true);
     logger.level = 'info';
@@ -30,7 +35,11 @@ describe('Logger', () => {
   });
 
   it('should throw a fatal error', done => {
-    expect(() => { logger.fatal('hi'); }).toThrow(new TypeError('hi'));
+    logger.talk();
+    expect(() => {
+      logger.fatal('hi');
+    }).toThrow(new TypeError('hi'));
+    logger.silence();
     done();
   });
 
@@ -98,6 +107,9 @@ describe('Logger', () => {
     logger.error('hi');
     logger.warn('hi');
     expect(Logger.doLog).toHaveBeenCalledTimes(7);
+    logger.level = 10;
+    logger.deepDebug('hi');
+    expect(Logger.doLog).toHaveBeenCalledTimes(8);
     done();
     logger.silence();
   });
@@ -110,7 +122,7 @@ describe('Logger', () => {
     spyOn(logger, 'log');
     spyOn(logger, 'error');
     spyOn(logger, 'warn');
-    for(let i = 0; i < 10; i++){
+    for (let i = 0; i < 10; i++) {
       logger.deepDebugThrottle('a');
       logger.debugThrottle('a');
       logger.infoThrottle('a');
@@ -146,6 +158,7 @@ describe('Logger', () => {
     expect(logger.assertType([], 'array')).toBe(true);
     expect(logger.assertType({}, 'object')).toBe(true);
     expect(logger.assertType(12, 'number')).toBe(true);
+    expect(logger.assertType(true, 'number')).toBe(false);
     expect(logger.assertType(false, 'boolean')).toBe(true);
     expect(logger.assertGreaterThan(2, 1)).toBe(true);
     expect(logger.assertGreaterThan(1, 2)).toBe(false);
@@ -155,16 +168,16 @@ describe('Logger', () => {
     expect(logger.assertLength([1])).toBe(true);
     expect(logger.assertLength('asdf')).toBe(true);
     expect(logger.assertLength('')).toBe(false);
-    expect(logger.assertEqual(2,2)).toBe(true);
-    expect(logger.assertEqual(2,1)).toBe(false);
-    expect(logger.assertNotEqual(2,1)).toBe(true);
-    expect(logger.assertNotEqual(2,2)).toBe(false);
+    expect(logger.assertEqual(2, 2)).toBe(true);
+    expect(logger.assertEqual(2, 1)).toBe(false);
+    expect(logger.assertNotEqual(2, 1)).toBe(true);
+    expect(logger.assertNotEqual(2, 2)).toBe(false);
     done();
   });
 
   it('should instantiate a new logger properly', done => {
     const log = Logger.getLogger();
-    spyOn(log, 'warn');
+    spyOn(console, 'log');
     log.warn({
       title: 'Some Title',
       message: 'Some Message',
@@ -183,8 +196,29 @@ describe('Logger', () => {
       timestamp: true,
       muted: false
     });
-    expect(log.warn).toHaveBeenCalled();
+    log.warn({
+      type: 'type 1',
+      suffix: 'asdf',
+      message: new Error('hi'),
+      muted: true
+    });
+    log.warn({
+      message: () => 'hi'
+    });
+    log.warn({
+      message: {hi: true}
+    });
+    expect(console.log).toHaveBeenCalled();
     done();
+  });
+
+  it('should process exec commands seamlessly', () => {
+    const defLogger = Logger.logger;
+    spyOn(defLogger, 'error');
+    spyOn(defLogger, 'debug');
+    logger.fromExec(true, true, true);
+    expect(defLogger.debug).toHaveBeenCalledTimes(1);
+    expect(defLogger.error).toHaveBeenCalledTimes(2);
   });
 
 });
