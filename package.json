@@ -1,5 +1,5 @@
 {
-  "name": "logger",
+  "name": "ezzy-logger",
   "description": "A logging tool for node",
   "repository": {
     "type": "git",
@@ -8,7 +8,7 @@
   "license": "MIT",
   "version": "0.1.0",
   "scripts": {
-    "test": "node node_modules/testing"
+    "test": "node node_modules/ezzy-testing"
   },
   "dependencies": {
     "argument": "ezzygemini/argument",
@@ -19,6 +19,6 @@
     "true-typeof": "ezzygemini/true-typeof"
   },
   "devDependencies": {
-    "testing": "ezzygemini/testing"
+    "ezzy-testing": "^0.1.2"
   }
 }
