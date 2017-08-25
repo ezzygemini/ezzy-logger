@@ -1,12 +1,17 @@
 {
   "name": "ezzy-logger",
   "description": "A logging tool for node",
+  "version": "0.1.10",
+  "author": {
+    "name": "Moises Romero",
+    "url": "http://ezzygemini.com",
+    "email": "ezzygemini@gmail.com"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ezzygemini/logger.git"
+    "url": "https://github.com/ezzygemini/ezzy-logger.git"
   },
   "license": "MIT",
-  "version": "0.1.1",
   "scripts": {
     "test": "node node_modules/ezzy-testing"
   },
