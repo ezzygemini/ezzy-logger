@@ -7,12 +7,12 @@ const LOG_LEVELS = [
   'debug',
   'deepDebug'
 ];
-const argument = require('argument');
+const argument = require('ezzy-argument');
 const DEFAULT_LEVEL = argument(['LOG_LEVEL', 'NODE_LOG_LEVEL'], 'info');
 const path = require('path');
 const callsite = require('callsite');
 const clc = require('cli-color');
-const configSetup = require('config-setup');
+const configSetup = require('ezzy-config-setup');
 const DEBUG_LEVEL = LOG_LEVELS.indexOf('debug');
 const INFO_LEVEL = LOG_LEVELS.indexOf('info');
 const LOG_LEVEL = LOG_LEVELS.indexOf('log');
@@ -20,7 +20,7 @@ const HIGHLIGHT_LEVEL = LOG_LEVELS.indexOf('highlight');
 const DEEP_DEBUG_LEVEL = LOG_LEVELS.indexOf('deepDebug');
 const WARN_LEVEL = LOG_LEVELS.indexOf('warn');
 const ERROR_LEVEL = LOG_LEVELS.indexOf('error');
-const trueTypeOf = require('true-typeof');
+const trueTypeOf = require('ezzy-typeof');
 let defaultInstance;
 
 /**

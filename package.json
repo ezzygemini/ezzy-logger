@@ -6,17 +6,17 @@
     "url": "https://github.com/ezzygemini/logger.git"
   },
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "test": "node node_modules/ezzy-testing"
   },
   "dependencies": {
-    "argument": "ezzygemini/argument",
     "callsite": "^1.0.0",
     "cli-color": "^1.1.0",
-    "config-setup": "github:ezzygemini/config-setup",
-    "path": "^0.12.7",
-    "true-typeof": "ezzygemini/true-typeof"
+    "ezzy-argument": "^0.1.0",
+    "ezzy-config-setup": "^0.1.0",
+    "ezzy-typeof": "0.0.1",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "ezzy-testing": "^0.1.2"
