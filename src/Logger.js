@@ -264,7 +264,7 @@ class Logger {
 
     if (isBrowser) {
       const args = [].concat(
-        indentation,
+        indentation || [],
         `[${logType}]`,
         config.title || [],
         config.message || config.msg || [],
