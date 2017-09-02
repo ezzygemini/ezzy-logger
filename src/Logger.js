@@ -185,55 +185,59 @@ class Logger {
 
     config.message = config.message || config.msg;
 
-    if (trueTypeOf(config.message) === 'error') {
-      config.stack = config.message.stack;
-      config.message = config.message.message;
-    }
+    if (!isBrowser) {
 
-    if (trueTypeOf(config.message) === 'function') {
-      config.message = config.message();
-    }
+      if (trueTypeOf(config.message) === 'error') {
+        config.stack = config.message.stack;
+        config.message = config.message.message;
+      }
 
-    if (trueTypeOf(config.message) === 'object') {
-      config.message = JSON.stringify(config.message);
-    }
+      if (trueTypeOf(config.message) === 'function') {
+        config.message = config.message();
+      }
 
-    if (config.data) {
-      config.message += ' ' + JSON.stringify(config.data);
-    }
+      if (trueTypeOf(config.message) === 'object') {
+        config.message = JSON.stringify(config.message);
+      }
 
-    if (config.message === '') {
-      return;
-    }
+      if (config.data) {
+        config.message += ' ' + JSON.stringify(config.data);
+      }
 
-    if (config.type !== '') {
-      config.type = `[${config.type}] `;
-    }
+      if (config.message === '') {
+        return;
+      }
 
-    if (config.title) {
-      config.message = `[${config.title}] ${config.message}`;
-    }
+      if (config.type !== '') {
+        config.type = `[${config.type}] `;
+      }
 
-    if (config.prefix) {
-      config.message = `[${logType}] ${config.type}${config.message}`;
-    }
+      if (config.title) {
+        config.message = `[${config.title}] ${config.message}`;
+      }
 
-    if (typeof config.suffix === 'string') {
-      config.message += Logger.color('blackBright', ` (${config.suffix})`);
-    } else if (config.suffix) {
-      config.message +=
-        Logger.color('blackBright', ` (${this._getLastLine()})`);
-    }
+      if (config.prefix) {
+        config.message = `[${logType}] ${config.type}${config.message}`;
+      }
 
-    if (config.ts || config.timestamp) {
-      config.message +=
-        Logger.color('blackBright', ` > ${new Date().getTime()}`);
-    }
+      if (typeof config.suffix === 'string') {
+        config.message += Logger.color('blackBright', ` (${config.suffix})`);
+      } else if (config.suffix) {
+        config.message +=
+          Logger.color('blackBright', ` (${this._getLastLine()})`);
+      }
 
-    if (config.muted) {
-      config.message = Logger.color('blackBright', config.message);
-    } else if (config.color) {
-      config.message = Logger.color(config.color, config.message);
+      if (config.ts || config.timestamp) {
+        config.message +=
+          Logger.color('blackBright', ` > ${Date.now()}`);
+      }
+
+      if (config.muted) {
+        config.message = Logger.color('blackBright', config.message);
+      } else if (config.color) {
+        config.message = Logger.color(config.color, config.message);
+      }
+
     }
 
     if (config.marginTop) {
@@ -258,7 +262,19 @@ class Logger {
       }
     }
 
-    console.log(indentation + config.message);
+    if (isBrowser) {
+      const args = [].concat(
+        indentation,
+        `[${logType}]`,
+        config.title || [],
+        config.message || config.msg || [],
+        config.data || [],
+        config.timestamp || config.ts ? Date.now() : []
+      );
+      console.log(...args);
+    } else {
+      console.log(indentation + config.message);
+    }
 
     if (config.stack) {
       console.log(Logger.color(config.color, config.stack));
