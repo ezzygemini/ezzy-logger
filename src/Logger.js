@@ -21,6 +21,7 @@ const DEEP_DEBUG_LEVEL = LOG_LEVELS.indexOf('deepDebug');
 const WARN_LEVEL = LOG_LEVELS.indexOf('warn');
 const ERROR_LEVEL = LOG_LEVELS.indexOf('error');
 const trueTypeOf = require('ezzy-typeof');
+const isBrowser = typeof window !== 'undefined';
 let defaultInstance;
 
 /**
@@ -102,9 +103,9 @@ class Logger {
    * @param {*} level The new level
    */
   set level(level) {
-    if(!process.env.HIDE_ARGUMENTS) {
-      console.log(clc.magentaBright
-        .bold(`[LOG] Requested logging level to change to '${level}'`));
+    if (!process.env.HIDE_ARGUMENTS) {
+      console.log(Logger.color('magentaBright',
+        `[LOG] Requested logging level to change to '${level}'`, true));
     }
     if (isNaN(level)) {
       const index = LOG_LEVELS.indexOf(level);
@@ -120,6 +121,22 @@ class Logger {
    */
   get level() {
     return this._level;
+  }
+
+  /**
+   * Turns a message into a colored message.
+   * @param {string} color The color of the message.
+   * @param {string} msg The string to color.
+   * @param {boolean} bold If the message should be bold.
+   */
+  static color(color, msg, bold = false) {
+    if (isBrowser) {
+      return msg;
+    } else if (bold) {
+      return clc[color].bold(msg);
+    } else {
+      return clc[color](msg);
+    }
   }
 
   /**
@@ -202,19 +219,21 @@ class Logger {
     }
 
     if (typeof config.suffix === 'string') {
-      config.message += clc.blackBright(` (${config.suffix})`);
+      config.message += Logger.color('blackBright', ` (${config.suffix})`);
     } else if (config.suffix) {
-      config.message += clc.blackBright(` (${this._getLastLine()})`);
+      config.message +=
+        Logger.color('blackBright', ` (${this._getLastLine()})`);
     }
 
     if (config.ts || config.timestamp) {
-      config.message += clc.blackBright(` > ${new Date().getTime()}`);
+      config.message +=
+        Logger.color('blackBright', ` > ${new Date().getTime()}`);
     }
 
     if (config.muted) {
-      config.message = clc.blackBright(config.message);
+      config.message = Logger.color('blackBright', config.message);
     } else if (config.color) {
-      config.message = clc[config.color](config.message);
+      config.message = Logger.color(config.color, config.message);
     }
 
     if (config.marginTop) {
@@ -224,9 +243,9 @@ class Logger {
     }
 
     if (config.borderTop || config.borderBottom) {
-      border = clc[config.color]
-      (new Array(Math.max(config.borderTop, config.borderBottom))
-        .join(config.borderChar));
+      border = Logger.color(config.color,
+        new Array(Math.max(config.borderTop, config.borderBottom))
+          .join(config.borderChar));
     }
 
     if (config.borderTop) {
@@ -242,7 +261,7 @@ class Logger {
     console.log(indentation + config.message);
 
     if (config.stack) {
-      console.log(clc[config.color](config.stack));
+      console.log(Logger.color(config.color, config.stack));
     }
 
     if (config.paddingBottom) {
@@ -281,7 +300,7 @@ class Logger {
     const fileName = path.basename(call.getFileName());
     const colNo = call.getColumnNumber();
     const lineNo = call.getLineNumber();
-    return clc.blackBright(`${fileName} ${lineNo}:${colNo}`);
+    return Logger.color('blackBright', `${fileName} ${lineNo}:${colNo}`);
   }
 
   /**
@@ -474,7 +493,7 @@ class Logger {
 
   /**
    * Asserts that the values has a length (array/string).
-   * @param {string|[]} val The first value.
+   * @param {*} val The first value.
    * @returns {boolean}
    */
   assertLength(...val) {
