@@ -1,2 +1,1 @@
-module.exports = require('./src/Logger').logger;
-
+module.exports = require('./src/Logger');
