@@ -22,7 +22,7 @@ const WARN_LEVEL = LOG_LEVELS.indexOf('warn');
 const ERROR_LEVEL = LOG_LEVELS.indexOf('error');
 const trueTypeOf = require('ezzy-typeof');
 const isBrowser = typeof window !== 'undefined';
-let defaultInstance;
+let inst;
 
 /**
  * The throttle timeouts.
@@ -81,11 +81,10 @@ class Logger {
    * @returns {Logger}
    */
   static get logger() {
-    if (defaultInstance) {
-      return defaultInstance;
+    if (!inst) {
+      inst = new Logger();
     }
-    defaultInstance = new Logger();
-    return defaultInstance;
+    return inst;
   }
 
   /**
