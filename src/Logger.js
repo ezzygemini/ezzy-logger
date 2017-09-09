@@ -441,13 +441,38 @@ class Logger {
    * @returns {boolean}
    */
   assert(...val) {
-    for (let i = 0; i < val.length; i++) {
-      if (!val[i]) {
-        this.warn(`Assertion Failed: Value '${val[i]}' is falsy`);
-        return false;
-      }
+    if (val.every(item => !!item)) {
+      return true;
     }
-    return true;
+    this.warn('Assertion Failed: There is a falsy value');
+    return false;
+  }
+
+  /**
+   * Asserts that one value is truthy.
+   * @param {*} val Values to assert.
+   * @returns {boolean}
+   */
+  assertOne(...val) {
+    if (val.findIndex(item => !!item) > -1) {
+      return true;
+    }
+    this.warn('Assertion Failed: No values are truthy');
+    return false;
+  }
+
+  /**
+   * Asserts that only one value is defined.
+   * @param {*} val1 Value one to be compared.
+   * @param {*} val2 Value two to be compared.
+   * @returns {boolean}
+   */
+  assertOnlyOne(val1, val2){
+    if(!!val1 === !val2){
+      return true;
+    }
+    this.warn(`Assertion Failed: '${val1}' is similar to '${val2}'`);
+    return false;
   }
 
   /**

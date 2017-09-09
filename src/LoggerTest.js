@@ -155,6 +155,11 @@ describe('Logger', () => {
     expect(logger.assert(1, true, [])).toBe(true);
     expect(logger.assert(5, 6, undefined)).toBe(false);
     expect(logger.assert(0, 1, 2, 3, 4)).toBe(false);
+    expect(logger.assertOne(false, 0, '')).toBe(false);
+    expect(logger.assertOne(false, 0, 1)).toBe(true);
+    expect(logger.assertOnlyOne(true, true)).toBe(false);
+    expect(logger.assertOnlyOne(true, false)).toBe(true);
+    expect(logger.assertOnlyOne(false, false)).toBe(false);
     expect(logger.assertType([], 'array')).toBe(true);
     expect(logger.assertType({}, 'object')).toBe(true);
     expect(logger.assertType(12, 'number')).toBe(true);
