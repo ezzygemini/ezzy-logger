@@ -13,7 +13,11 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "node node_modules/ezzy-testing"
+    "coverage": "node node_modules/ezzy-testing/coverage",
+    "pretest": "npm install",
+    "test": "node node_modules/ezzy-testing",
+    "prebuild": "npm install",
+    "build": "npm run coverage"
   },
   "dependencies": {
     "callsite": "^1.0.0",
