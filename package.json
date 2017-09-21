@@ -22,12 +22,12 @@
   "dependencies": {
     "callsite": "^1.0.0",
     "cli-color": "^1.1.0",
-    "ezzy-argument": "^0.1.0",
-    "ezzy-config-setup": "^0.1.0",
+    "ezzy-argument": "^0.1.13",
+    "ezzy-config-setup": "^0.1.11",
     "ezzy-typeof": "0.0.1",
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "ezzy-testing": "^0.1.2"
+    "ezzy-testing": "^0.1.16"
   }
 }
