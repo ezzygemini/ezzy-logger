@@ -1,7 +1,7 @@
 {
   "name": "ezzy-logger",
   "description": "A logging tool for node",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "author": {
     "name": "Moises Romero",
     "url": "http://ezzygemini.com",
