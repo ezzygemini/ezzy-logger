@@ -168,7 +168,8 @@ class Logger {
         ts: false,
         timestamp: false,
         muted: false,
-        stack: null
+        stack: null,
+        error: null
       },
       args,
       ['message:error'],
@@ -186,17 +187,21 @@ class Logger {
 
     if (!isBrowser) {
 
-      if (trueTypeOf(config.message) === 'error') {
+      const tto = trueTypeOf(config.message);
+
+      if (tto === 'error') {
         config.stack = config.message.stack;
         config.message = config.message.message;
-      }
-
-      if (trueTypeOf(config.message) === 'function') {
+      } else if (tto === 'function') {
         config.message = config.message();
       }
-
-      if (trueTypeOf(config.message) === 'object') {
+      if (tto === 'object') {
         config.message = JSON.stringify(config.message);
+      }
+
+      if (config.error) {
+        config.message = (config.message || '') + config.error.message;
+        config.message.stack = config.error.stack;
       }
 
       if (config.data) {
@@ -467,8 +472,8 @@ class Logger {
    * @param {*} val2 Value two to be compared.
    * @returns {boolean}
    */
-  assertOnlyOne(val1, val2){
-    if(!!val1 === !val2){
+  assertOnlyOne(val1, val2) {
+    if (!!val1 === !val2) {
       return true;
     }
     this.warn(`Assertion Failed: '${val1}' is similar to '${val2}'`);
