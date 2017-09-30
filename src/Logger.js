@@ -200,7 +200,11 @@ class Logger {
       }
 
       if (config.error) {
-        config.message = (config.message || '') + config.error.message;
+        if (config.message) {
+          config.message = `${config.message} [${config.error.message}]`;
+        } else {
+          config.message = config.error.message;
+        }
         config.message.stack = config.error.stack;
       }
 
