@@ -50,7 +50,7 @@ class Logger {
      * @type {boolean}
      * @private
      */
-    this._silent = silent;
+    this.silent = silent;
 
     /**
      * The level of logging.
@@ -71,7 +71,7 @@ class Logger {
       console.log(
         '[LOG] Logging level set to ' + this._level + ' | is ' +
         (this.isDebugging ? '' : 'not') + ' debugging | is ' +
-        (this._silent ? '' : 'not') + ' silent'
+        (this.silent ? '' : 'not') + ' silent'
       );
     }
   }
@@ -333,7 +333,7 @@ class Logger {
    * @returns {Logger}
    */
   silence() {
-    this._silent = true;
+    this.silent = true;
     return this;
   }
 
@@ -343,7 +343,7 @@ class Logger {
    * @returns {Logger}
    */
   talk() {
-    this._silent = false;
+    this.silent = false;
     return this;
   }
 
@@ -361,7 +361,7 @@ class Logger {
    * @returns {Arguments}
    */
   highlight() {
-    if (!this._silent && this._level >= HIGHLIGHT_LEVEL) {
+    if (!this.silent && this._level >= HIGHLIGHT_LEVEL) {
       Logger.doLog.call(this, 'HGH', 'yellowBright', arguments);
     }
     return arguments;
@@ -372,7 +372,7 @@ class Logger {
    * @returns {Arguments}
    */
   debug() {
-    if (!this._silent && this.isDebugging) {
+    if (!this.silent && this.isDebugging) {
       Logger.doLog.call(this, 'DBG', 'magenta', arguments);
     }
     return arguments;
@@ -383,7 +383,7 @@ class Logger {
    * @returns {Arguments}
    */
   deepDebug() {
-    if (!this._silent && this._level >= DEEP_DEBUG_LEVEL) {
+    if (!this.silent && this._level >= DEEP_DEBUG_LEVEL) {
       Logger.doLog.call(this, 'DBG', 'blackBright', arguments);
     }
     return arguments;
@@ -394,7 +394,7 @@ class Logger {
    * @returns {Arguments}
    */
   info() {
-    if (!this._silent && this._level >= INFO_LEVEL) {
+    if (!this.silent && this._level >= INFO_LEVEL) {
       Logger.doLog.call(this, 'INF', null, arguments);
     }
     return arguments;
@@ -405,7 +405,7 @@ class Logger {
    * @returns {Arguments}
    */
   log() {
-    if (!this._silent && this._level >= LOG_LEVEL) {
+    if (!this.silent && this._level >= LOG_LEVEL) {
       Logger.doLog.call(this, 'LOG', null, arguments);
     }
     return arguments;
@@ -416,7 +416,7 @@ class Logger {
    * @returns {Arguments}
    */
   warn() {
-    if (!this._silent && this._level >= WARN_LEVEL) {
+    if (!this.silent && this._level >= WARN_LEVEL) {
       Logger.doLog.call(this, 'WRN', 'yellow', arguments);
     }
     return arguments;
@@ -427,7 +427,7 @@ class Logger {
    * @returns {Arguments}
    */
   error() {
-    if (!this._silent && this._level >= ERROR_LEVEL) {
+    if (!this.silent && this._level >= ERROR_LEVEL) {
       Logger.doLog.call(this, 'ERR', 'red', arguments);
     }
     return arguments;
@@ -438,7 +438,7 @@ class Logger {
    * @throws {TypeError}
    */
   fatal(...args) {
-    if (!this._silent) {
+    if (!this.silent) {
       Logger.doLog('ERR', 'red', ...args);
     }
     throw new TypeError(args[0]);
