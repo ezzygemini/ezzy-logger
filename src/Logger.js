@@ -151,7 +151,7 @@ class Logger {
       {
         title: '',
         message: '',
-        msg: null,
+        msg: '',
         data: null,
         type: '',
         color: debugColor,
@@ -172,12 +172,11 @@ class Logger {
         error: null
       },
       args,
-      ['message:error'],
-      ['message:string'],
-      ['message:function'],
+      ['message:error|string|function'],
       ['title:string', 'message:string|function'],
-      ['title:string', 'data:object|boolean|number'],
-      ['title:string', 'message:string', 'data:object'],
+      ['title:string', 'data:*'],
+      ['title:string', 'message:string|function', 'error:error'],
+      ['title:string', 'message:string|function', 'data:*'],
       ['this:object']
     );
     const indentation = new Array(config.indent).join(' ');
