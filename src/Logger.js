@@ -175,7 +175,8 @@ class Logger {
       ['message:error'],
       ['message:string'],
       ['message:function'],
-      ['title:string', 'message:string'],
+      ['title:string', 'message:string|function'],
+      ['title:string', 'data:object|boolean|number'],
       ['title:string', 'message:string', 'data:object'],
       ['this:object']
     );
