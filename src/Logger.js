@@ -175,8 +175,8 @@ class Logger {
       ['message:error'],
       ['message:string'],
       ['message:function'],
-      ['title:string', 'message'],
-      ['title:string', 'message', 'data'],
+      ['title:string', 'message:string'],
+      ['title:string', 'message:string', 'data:object'],
       ['this:object']
     );
     const indentation = new Array(config.indent).join(' ');
