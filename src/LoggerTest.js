@@ -1,10 +1,15 @@
-const Logger = require('./Logger');
+let log = jasmine.createSpy();
+const Logger = require('proxyquire').noCallThru().load('./Logger', {
+  './console': {log}
+});
 const exec = require('child_process').exec;
 let logger;
 
 describe('Logger', () => {
 
-  beforeEach(() => logger = Logger.getLogger('debug', true));
+  beforeEach(() => {
+    logger = Logger.logger;
+  });
 
   it('should only invoke one instance of logger', done => {
     expect(Logger.logger).toBe(Logger.logger);
@@ -12,9 +17,31 @@ describe('Logger', () => {
   });
 
   it('should display if it is debugging', done => {
+    logger.level = 'debug';
     expect(logger.isDebugging).toBe(true);
     logger.level = 'info';
     expect(logger.isDebugging).toBe(false);
+    done();
+  });
+
+  it('should log with the correct configuration', done => {
+    logger.level = 'deepDebug';
+    logger.log('Test');
+    expect(log.calls.mostRecent().args[0])
+      .toMatch(/^\[LOG] Test.*$/);
+    logger.log('Title', 'Message');
+    expect(log.calls.mostRecent().args[0])
+      .toMatch(/^\[LOG] \[Title] Message.*$/);
+    logger.log('Title', 'Message', {asdf: true});
+    expect(log.calls.mostRecent().args[0])
+      .toMatch(/^\[LOG] \[Title] Message.*{"asdf":true}.*$/);
+    const mockBasics = {request: {loggerPrefix: 'reqPrefix'}};
+    logger.log(mockBasics, 'Title', 'Message', {asdf: true});
+    expect(log.calls.mostRecent().args[0])
+      .toMatch(/^\[LOG] \[reqPrefix] \[Title] Message.*{"asdf":true}.*$/);
+    logger.log(mockBasics, 'Message', {asdf: true});
+    expect(log.calls.mostRecent().args[0])
+      .toMatch(/^\[LOG] \[reqPrefix] Message {"asdf":true}.*$/);
     done();
   });
 
@@ -181,9 +208,9 @@ describe('Logger', () => {
   });
 
   it('should instantiate a new logger properly', done => {
-    const log = Logger.getLogger();
-    spyOn(console, 'log');
-    log.warn({
+    logger.level = 'warn';
+    logger.talk();
+    logger.warn({
       title: 'Some Title',
       message: 'Some Message',
       data: {},
@@ -201,19 +228,22 @@ describe('Logger', () => {
       timestamp: true,
       muted: false
     });
-    log.warn({
+    expect(log.calls.mostRecent().args[0]).toMatch(/^$/);
+    logger.warn({
       type: 'type 1',
       suffix: 'asdf',
       message: new Error('hi'),
       muted: true
     });
-    log.warn({
+    expect(log.calls.mostRecent().args[0]).toMatch(/.*Error.*/);
+    logger.warn({
       message: () => 'hi'
     });
-    log.warn({
+    expect(log.calls.mostRecent().args[0]).toMatch(/hi/);
+    logger.warn({
       message: {hi: true}
     });
-    expect(console.log).toHaveBeenCalled();
+    expect(log.calls.mostRecent().args[0]).toMatch(/{"hi":true}/);
     done();
   });
 

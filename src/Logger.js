@@ -7,6 +7,7 @@ const LOG_LEVELS = [
   'debug',
   'deepDebug'
 ];
+const console = require('./console');
 const argument = require('ezzy-argument');
 const DEFAULT_LEVEL = argument(['LOG_LEVEL', 'NODE_LOG_LEVEL'], 'info');
 const path = require('path');
@@ -22,7 +23,6 @@ const WARN_LEVEL = LOG_LEVELS.indexOf('warn');
 const ERROR_LEVEL = LOG_LEVELS.indexOf('error');
 const trueTypeOf = require('ezzy-typeof');
 const isBrowser = typeof window !== 'undefined';
-let inst;
 
 /**
  * The throttle timeouts.
@@ -81,10 +81,10 @@ class Logger {
    * @returns {Logger}
    */
   static get logger() {
-    if (!inst) {
-      inst = new Logger();
+    if (!this._inst) {
+      this._inst = new Logger();
     }
-    return inst;
+    return this._inst;
   }
 
   /**
@@ -169,14 +169,20 @@ class Logger {
         timestamp: false,
         muted: false,
         stack: null,
-        error: null
+        error: null,
+        basics: undefined
       },
       args,
       ['message:error|string|function'],
       ['title:string', 'message:string|function'],
+      ['basics:object', 'message:string|function'],
       ['title:string', 'data:*'],
       ['title:string', 'message:string|function', 'error:error'],
       ['title:string', 'message:string|function', 'data:*'],
+      ['basics:object', 'title:string', 'message:string|function'],
+      ['basics:object', 'message:string', 'data:*'],
+      ['basics:object', 'title:string', 'message:string|function', 'error:error'],
+      ['basics:object', 'title:string', 'message:string|function', 'data:*'],
       ['this:object']
     );
     const indentation = new Array(config.indent).join(' ');
@@ -222,6 +228,10 @@ class Logger {
 
       if (config.title) {
         config.message = `[${config.title}] ${config.message}`;
+      }
+
+      if(config.basics && config.basics.request && config.basics.request.loggerPrefix){
+        config.message = `[${config.basics.request.loggerPrefix}] ${config.message}`;
       }
 
       if (config.prefix) {

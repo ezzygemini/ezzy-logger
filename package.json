@@ -14,7 +14,6 @@
   "license": "MIT",
   "scripts": {
     "coverage": "node node_modules/ezzy-testing/coverage",
-    "pretest": "npm install",
     "test": "node node_modules/ezzy-testing",
     "prebuild": "npm install",
     "build": "npm run coverage"
@@ -28,6 +27,7 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "ezzy-testing": "^0.1.21"
+    "ezzy-testing": "^0.1.21",
+    "proxyquire": "^2.0.0"
   }
 }
