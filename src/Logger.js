@@ -230,7 +230,11 @@ class Logger {
         config.message = `[${config.title}] ${config.message}`;
       }
 
-      if(config.basics && config.basics.request && config.basics.request.loggerPrefix){
+      if (
+        config.basics &&
+        config.basics.request &&
+        config.basics.request.loggerPrefix
+      ) {
         config.message = `[${config.basics.request.loggerPrefix}] ${config.message}`;
       }
 
@@ -329,12 +333,16 @@ class Logger {
        *  getColumnNumber: function
        * }}
      */
-    const call =
-      callsite().find(l => !/(index|Logger)\.js$/.test(l.getFileName()));
-    const fileName = path.basename(call.getFileName());
-    const colNo = call.getColumnNumber();
-    const lineNo = call.getLineNumber();
-    return Logger.color('blackBright', `${fileName} ${lineNo}:${colNo}`);
+    try {
+      const call =
+        callsite().find(l => !/(index|Logger)\.js$/.test(l.getFileName()));
+      const fileName = path.basename(call.getFileName());
+      const colNo = call.getColumnNumber();
+      const lineNo = call.getLineNumber();
+      return Logger.color('blackBright', `${fileName} ${lineNo}:${colNo}`);
+    } catch (e) {
+      return '';
+    }
   }
 
   /**
