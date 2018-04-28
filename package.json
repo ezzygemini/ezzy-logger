@@ -23,7 +23,7 @@
     "cli-color": "^1.1.0",
     "ezzy-argument": "^0.1.18",
     "ezzy-config-setup": "^0.1.16",
-    "ezzy-typeof": "0.0.1",
+    "ezzy-typeof": "0.1.16",
     "path": "^0.12.7"
   },
   "devDependencies": {
