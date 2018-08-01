@@ -1,28 +1,28 @@
 const LOG_LEVELS = [
-  'error',
-  'warn',
-  'highlight',
-  'info',
-  'log',
-  'debug',
-  'deepDebug'
+  "error",
+  "warn",
+  "highlight",
+  "info",
+  "log",
+  "debug",
+  "deepDebug"
 ];
-const console = require('./console');
-const argument = require('ezzy-argument');
-const DEFAULT_LEVEL = argument(['LOG_LEVEL', 'NODE_LOG_LEVEL'], 'info');
-const path = require('path');
-const callsite = require('callsite');
-const clc = require('cli-color');
-const configSetup = require('ezzy-config-setup');
-const DEBUG_LEVEL = LOG_LEVELS.indexOf('debug');
-const INFO_LEVEL = LOG_LEVELS.indexOf('info');
-const LOG_LEVEL = LOG_LEVELS.indexOf('log');
-const HIGHLIGHT_LEVEL = LOG_LEVELS.indexOf('highlight');
-const DEEP_DEBUG_LEVEL = LOG_LEVELS.indexOf('deepDebug');
-const WARN_LEVEL = LOG_LEVELS.indexOf('warn');
-const ERROR_LEVEL = LOG_LEVELS.indexOf('error');
-const trueTypeOf = require('ezzy-typeof');
-const isBrowser = typeof window !== 'undefined';
+const console = require("./console");
+const argument = require("ezzy-argument");
+const DEFAULT_LEVEL = argument(["LOG_LEVEL", "NODE_LOG_LEVEL"], "info");
+const path = require("path");
+const callsite = require("callsite");
+const clc = require("cli-color");
+const configSetup = require("ezzy-config-setup");
+const DEBUG_LEVEL = LOG_LEVELS.indexOf("debug");
+const INFO_LEVEL = LOG_LEVELS.indexOf("info");
+const LOG_LEVEL = LOG_LEVELS.indexOf("log");
+const HIGHLIGHT_LEVEL = LOG_LEVELS.indexOf("highlight");
+const DEEP_DEBUG_LEVEL = LOG_LEVELS.indexOf("deepDebug");
+const WARN_LEVEL = LOG_LEVELS.indexOf("warn");
+const ERROR_LEVEL = LOG_LEVELS.indexOf("error");
+const trueTypeOf = require("ezzy-typeof");
+const isBrowser = typeof window !== "undefined";
 
 /**
  * The throttle timeouts.
@@ -37,13 +37,11 @@ const _throttle = {};
  * stylized in different ways depending on the level.
  */
 class Logger {
-
   /**
    * @param {string|number} level The default start level.
    * @param {boolean} silent If the logger should start silent.
    */
   constructor(level = DEFAULT_LEVEL, silent = false) {
-
     /**
      * Indicates if we should be silent.
      *
@@ -69,9 +67,13 @@ class Logger {
     // Inform the debugging status.
     if (!process.env.HIDE_ARGUMENTS) {
       console.log(
-        '[LOG] Logging level set to ' + this._level + ' | is ' +
-        (this.isDebugging ? '' : 'not') + ' debugging | is ' +
-        (this.silent ? '' : 'not') + ' silent'
+        "[LOG] Logging level set to " +
+          this._level +
+          " | is " +
+          (this.isDebugging ? "" : "not") +
+          " debugging | is " +
+          (this.silent ? "" : "not") +
+          " silent"
       );
     }
   }
@@ -103,8 +105,13 @@ class Logger {
    */
   set level(level) {
     if (!process.env.HIDE_ARGUMENTS) {
-      console.log(Logger.color('magentaBright',
-        `[LOG] Requested logging level to change to '${level}'`, true));
+      console.log(
+        Logger.color(
+          "magentaBright",
+          `[LOG] Requested logging level to change to '${level}'`,
+          true
+        )
+      );
     }
     if (isNaN(level)) {
       const index = LOG_LEVELS.indexOf(level);
@@ -141,19 +148,19 @@ class Logger {
   /**
    * Concatenates the type of log into a single string for the console.
    *
-   * @param {String} logType The log type.
-   * @param {String} debugColor Color to use for the console.
+   * @param {string} logType The log type.
+   * @param {string} methodName The console method to use.
+   * @param {string} debugColor Color to use for the console.
    * @param {Arguments} args The arguments to check as configuration.
    */
-  static doLog(logType, debugColor, args) {
-
+  static doLog(logType, methodName, debugColor, args) {
     const config = configSetup(
       {
-        title: '',
-        message: '',
-        msg: '',
+        title: "",
+        message: "",
+        msg: "",
         data: null,
-        type: '',
+        type: "",
         color: debugColor,
         indent: 0,
         prefix: true,
@@ -164,7 +171,7 @@ class Logger {
         paddingTop: 0,
         borderTop: 0,
         borderBottom: 0,
-        borderChar: '-',
+        borderChar: "-",
         ts: false,
         timestamp: false,
         muted: false,
@@ -173,35 +180,39 @@ class Logger {
         basics: undefined
       },
       args,
-      ['message:error|string|function'],
-      ['title:string', 'message:string|function'],
-      ['basics:object', 'message:string|function'],
-      ['title:string', 'data:*'],
-      ['title:string', 'message:string|function', 'error:error'],
-      ['title:string', 'message:string|function', 'data:*'],
-      ['basics:object', 'title:string', 'message:string|function'],
-      ['basics:object', 'message:string', 'data:*'],
-      ['basics:object', 'title:string', 'message:string|function', 'error:error'],
-      ['basics:object', 'title:string', 'message:string|function', 'data:*'],
-      ['this:object']
+      ["message:error|string|function"],
+      ["title:string", "message:string|function"],
+      ["basics:object", "message:string|function"],
+      ["title:string", "data:*"],
+      ["title:string", "message:string|function", "error:error"],
+      ["title:string", "message:string|function", "data:*"],
+      ["basics:object", "title:string", "message:string|function"],
+      ["basics:object", "message:string", "data:*"],
+      [
+        "basics:object",
+        "title:string",
+        "message:string|function",
+        "error:error"
+      ],
+      ["basics:object", "title:string", "message:string|function", "data:*"],
+      ["this:object"]
     );
-    const indentation = new Array(config.indent).join(' ');
+    const indentation = new Array(config.indent).join(" ");
     let i;
     let border;
 
     config.message = config.message || config.msg;
 
     if (!isBrowser) {
-
       const tto = trueTypeOf(config.message);
 
-      if (tto === 'error') {
+      if (tto === "error") {
         config.stack = config.message.stack;
         config.message = config.message.message;
-      } else if (tto === 'function') {
+      } else if (tto === "function") {
         config.message = config.message();
       }
-      if (tto === 'object') {
+      if (tto === "object") {
         config.message = JSON.stringify(config.message);
       }
 
@@ -215,14 +226,14 @@ class Logger {
       }
 
       if (config.data) {
-        config.message += ' ' + JSON.stringify(config.data);
+        config.message += " " + JSON.stringify(config.data);
       }
 
-      if (config.message === '') {
+      if (config.message === "") {
         return;
       }
 
-      if (config.type !== '') {
+      if (config.type !== "") {
         config.type = `[${config.type}] `;
       }
 
@@ -235,52 +246,57 @@ class Logger {
         config.basics.request &&
         config.basics.request.loggerPrefix
       ) {
-        config.message = `[${config.basics.request.loggerPrefix}] ${config.message}`;
+        config.message = `[${config.basics.request.loggerPrefix}] ${
+          config.message
+        }`;
       }
 
       if (config.prefix) {
         config.message = `[${logType}] ${config.type}${config.message}`;
       }
 
-      if (typeof config.suffix === 'string') {
-        config.message += Logger.color('blackBright', ` (${config.suffix})`);
+      if (typeof config.suffix === "string") {
+        config.message += Logger.color("blackBright", ` (${config.suffix})`);
       } else if (config.suffix) {
-        config.message +=
-          Logger.color('blackBright', ` (${this._getLastLine()})`);
+        config.message += Logger.color(
+          "blackBright",
+          ` (${this._getLastLine()})`
+        );
       }
 
       if (config.ts || config.timestamp) {
-        config.message +=
-          Logger.color('blackBright', ` > ${Date.now()}`);
+        config.message += Logger.color("blackBright", ` > ${Date.now()}`);
       }
 
       if (config.muted) {
-        config.message = Logger.color('blackBright', config.message);
+        config.message = Logger.color("blackBright", config.message);
       } else if (config.color) {
         config.message = Logger.color(config.color, config.message);
       }
-
     }
 
     if (config.marginTop) {
       for (i = 0; i < config.marginTop; i++) {
-        console.log('');
+        console[methodName]("");
       }
     }
 
     if (config.borderTop || config.borderBottom) {
-      border = Logger.color(config.color,
-        new Array(Math.max(config.borderTop, config.borderBottom))
-          .join(config.borderChar));
+      border = Logger.color(
+        config.color,
+        new Array(Math.max(config.borderTop, config.borderBottom)).join(
+          config.borderChar
+        )
+      );
     }
 
     if (config.borderTop) {
-      console.log(border);
+      console[methodName](border);
     }
 
     if (config.paddingTop) {
       for (i = 0; i < config.paddingTop; i++) {
-        console.log('');
+        console[methodName]("");
       }
     }
 
@@ -293,31 +309,30 @@ class Logger {
         config.data || [],
         config.timestamp || config.ts ? Date.now() : []
       );
-      console.log(...args);
+      console[methodName](...args);
     } else {
-      console.log(indentation + config.message);
+      console[methodName](indentation + config.message);
     }
 
     if (config.stack) {
-      console.log(Logger.color(config.color, config.stack));
+      console[methodName](Logger.color(config.color, config.stack));
     }
 
     if (config.paddingBottom) {
       for (i = 0; i < config.paddingBottom; i++) {
-        console.log('');
+        console[methodName]("");
       }
     }
 
     if (config.borderBottom) {
-      console.log(border);
+      console[methodName](border);
     }
 
     if (config.marginBottom) {
       for (i = 0; i < config.marginBottom; i++) {
-        console.log('');
+        console[methodName]("");
       }
     }
-
   }
 
   /**
@@ -328,20 +343,21 @@ class Logger {
   _getLastLine() {
     /**
      * @type {{
-       *  getFileName: function,
-       *  getLineNumber: function,
-       *  getColumnNumber: function
-       * }}
+     *  getFileName: function,
+     *  getLineNumber: function,
+     *  getColumnNumber: function
+     * }}
      */
     try {
-      const call =
-        callsite().find(l => !/(index|Logger)\.js$/.test(l.getFileName()));
+      const call = callsite().find(
+        l => !/(index|Logger)\.js$/.test(l.getFileName())
+      );
       const fileName = path.basename(call.getFileName());
       const colNo = call.getColumnNumber();
       const lineNo = call.getLineNumber();
-      return Logger.color('blackBright', `${fileName} ${lineNo}:${colNo}`);
+      return Logger.color("blackBright", `${fileName} ${lineNo}:${colNo}`);
     } catch (e) {
-      return '';
+      return "";
     }
   }
 
@@ -380,7 +396,7 @@ class Logger {
    */
   highlight() {
     if (!this.silent && this._level >= HIGHLIGHT_LEVEL) {
-      Logger.doLog.call(this, 'HGH', 'yellowBright', arguments);
+      Logger.doLog.call(this, "HGH", "error", "yellowBright", arguments);
     }
     return arguments;
   }
@@ -391,7 +407,7 @@ class Logger {
    */
   debug() {
     if (!this.silent && this.isDebugging) {
-      Logger.doLog.call(this, 'DBG', 'magenta', arguments);
+      Logger.doLog.call(this, "DBG", "debug", "magenta", arguments);
     }
     return arguments;
   }
@@ -402,7 +418,7 @@ class Logger {
    */
   deepDebug() {
     if (!this.silent && this._level >= DEEP_DEBUG_LEVEL) {
-      Logger.doLog.call(this, 'DBG', 'blackBright', arguments);
+      Logger.doLog.call(this, "DBG", "debug", "blackBright", arguments);
     }
     return arguments;
   }
@@ -413,7 +429,7 @@ class Logger {
    */
   info() {
     if (!this.silent && this._level >= INFO_LEVEL) {
-      Logger.doLog.call(this, 'INF', null, arguments);
+      Logger.doLog.call(this, "INF", "info", null, arguments);
     }
     return arguments;
   }
@@ -424,7 +440,7 @@ class Logger {
    */
   log() {
     if (!this.silent && this._level >= LOG_LEVEL) {
-      Logger.doLog.call(this, 'LOG', null, arguments);
+      Logger.doLog.call(this, "LOG", "log", null, arguments);
     }
     return arguments;
   }
@@ -435,7 +451,7 @@ class Logger {
    */
   warn() {
     if (!this.silent && this._level >= WARN_LEVEL) {
-      Logger.doLog.call(this, 'WRN', 'yellow', arguments);
+      Logger.doLog.call(this, "WRN", "warn", "yellow", arguments);
     }
     return arguments;
   }
@@ -446,7 +462,7 @@ class Logger {
    */
   error() {
     if (!this.silent && this._level >= ERROR_LEVEL) {
-      Logger.doLog.call(this, 'ERR', 'red', arguments);
+      Logger.doLog.call(this, "ERR", "error", "red", arguments);
     }
     return arguments;
   }
@@ -457,7 +473,7 @@ class Logger {
    */
   fatal(...args) {
     if (!this.silent) {
-      Logger.doLog('ERR', 'red', ...args);
+      Logger.doLog("ERR", "error", "red", ...args);
     }
     throw new TypeError(args[0]);
   }
@@ -471,7 +487,7 @@ class Logger {
     if (val.every(item => !!item)) {
       return true;
     }
-    this.warn('Assertion Failed: There is a falsy value');
+    this.warn("Assertion Failed: There is a falsy value");
     return false;
   }
 
@@ -484,7 +500,7 @@ class Logger {
     if (val.findIndex(item => !!item) > -1) {
       return true;
     }
-    this.warn('Assertion Failed: No values are truthy');
+    this.warn("Assertion Failed: No values are truthy");
     return false;
   }
 
@@ -593,7 +609,7 @@ class Logger {
    * @param timeout
    * @param method
    */
-  throttle(msg, timeout = 1000, method = 'log') {
+  throttle(msg, timeout = 1000, method = "log") {
     const key = method + (msg.message || msg);
     if (_throttle[key]) {
       clearTimeout(_throttle[key]);
@@ -601,16 +617,21 @@ class Logger {
       this[method](msg);
     }
     const self = this;
-    _throttle[key] = setTimeout(function() {
-      self[this.method](Object.assign(this.msg, {
-        suffix: 'Throttled - ' + self._getLastLine()
-      }));
-      delete _throttle[this.key];
-    }.bind({
-      key,
-      method: method,
-      msg: typeof msg === 'string' ? {message: msg} : msg
-    }), timeout);
+    _throttle[key] = setTimeout(
+      function() {
+        self[this.method](
+          Object.assign(this.msg, {
+            suffix: "Throttled - " + self._getLastLine()
+          })
+        );
+        delete _throttle[this.key];
+      }.bind({
+        key,
+        method: method,
+        msg: typeof msg === "string" ? { message: msg } : msg
+      }),
+      timeout
+    );
   }
 
   /**
@@ -620,7 +641,7 @@ class Logger {
    * @returns void
    */
   debugThrottle(msg, timeout) {
-    this.throttle(msg, timeout, 'debug');
+    this.throttle(msg, timeout, "debug");
   }
 
   /**
@@ -630,7 +651,7 @@ class Logger {
    * @returns void
    */
   deepDebugThrottle(msg, timeout) {
-    this.throttle(msg, timeout, 'deepDebug');
+    this.throttle(msg, timeout, "deepDebug");
   }
 
   /**
@@ -640,7 +661,7 @@ class Logger {
    * @returns void
    */
   logThrottle(msg, timeout) {
-    this.throttle(msg, timeout, 'log');
+    this.throttle(msg, timeout, "log");
   }
 
   /**
@@ -650,7 +671,7 @@ class Logger {
    * @returns void
    */
   infoThrottle(msg, timeout) {
-    this.throttle(msg, timeout, 'info');
+    this.throttle(msg, timeout, "info");
   }
 
   /**
@@ -660,7 +681,7 @@ class Logger {
    * @returns void
    */
   highlightThrottle(msg, timeout) {
-    this.throttle(msg, timeout, 'highlight');
+    this.throttle(msg, timeout, "highlight");
   }
 
   /**
@@ -670,7 +691,7 @@ class Logger {
    * @returns void
    */
   warnThrottle(msg, timeout) {
-    this.throttle(msg, timeout, 'warn');
+    this.throttle(msg, timeout, "warn");
   }
 
   /**
@@ -680,7 +701,7 @@ class Logger {
    * @returns void
    */
   errorThrottle(msg, timeout) {
-    this.throttle(msg, timeout, 'error');
+    this.throttle(msg, timeout, "error");
   }
 
   /**
@@ -700,7 +721,6 @@ class Logger {
       Logger.logger.error(stderr);
     }
   }
-
 }
 
 module.exports = Logger;
