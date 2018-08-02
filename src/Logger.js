@@ -51,6 +51,12 @@ class Logger {
     this.silent = silent;
 
     /**
+     * Checks if the current logging is groupped.
+     * @type {boolean}
+     */
+    this.isGroupped = false;
+
+    /**
      * The level of logging.
      *
      * @type {string}
@@ -360,6 +366,56 @@ class Logger {
   }
 
   /**
+   * Toggles the groupping.
+   * @param args
+   * @returns {Logger}
+   */
+  group(...args) {
+    this.isGroupped = !this.isGroupped;
+    if (this.isGroupped) {
+      console.group(...args);
+    } else {
+      console.groupEnd();
+    }
+    return this;
+  }
+
+  /**
+   * Shortcut for group end.
+   * @returns {*}
+   */
+  ungroup() {
+    return this.groupEnd();
+  }
+
+  /**
+   * Shortcut for group end.
+   * @returns {*}
+   */
+  done() {
+    return this.groupEnd();
+  }
+
+  /**
+   * Starts a group.
+   * @param args
+   * @returns {Logger}
+   */
+  groupStart(...args) {
+    console.group(...args);
+    return this;
+  }
+
+  /**
+   * Ends a group.
+   * @returns {Logger}
+   */
+  groupEnd() {
+    console.groupEnd();
+    return this;
+  }
+
+  /**
    * Sets the logger to silence.
    *
    * @returns {Logger}
@@ -396,7 +452,7 @@ class Logger {
     if (!this.silent && this._level >= HIGHLIGHT_LEVEL) {
       Logger.doLog.call(this, "HGH", "error", "yellowBright", arguments);
     }
-    return arguments;
+    return this;
   }
 
   /**
@@ -407,7 +463,7 @@ class Logger {
     if (!this.silent && this.isDebugging) {
       Logger.doLog.call(this, "DBG", "debug", "magenta", arguments);
     }
-    return arguments;
+    return this;
   }
 
   /**
@@ -418,7 +474,7 @@ class Logger {
     if (!this.silent && this._level >= DEEP_DEBUG_LEVEL) {
       Logger.doLog.call(this, "DBG", "debug", "blackBright", arguments);
     }
-    return arguments;
+    return this;
   }
 
   /**
@@ -429,7 +485,7 @@ class Logger {
     if (!this.silent && this._level >= INFO_LEVEL) {
       Logger.doLog.call(this, "INF", "info", null, arguments);
     }
-    return arguments;
+    return this;
   }
 
   /**
@@ -440,7 +496,7 @@ class Logger {
     if (!this.silent && this._level >= LOG_LEVEL) {
       Logger.doLog.call(this, "LOG", "log", null, arguments);
     }
-    return arguments;
+    return this;
   }
 
   /**
@@ -451,7 +507,7 @@ class Logger {
     if (!this.silent && this._level >= WARN_LEVEL) {
       Logger.doLog.call(this, "WRN", "warn", "yellow", arguments);
     }
-    return arguments;
+    return this;
   }
 
   /**
@@ -462,7 +518,7 @@ class Logger {
     if (!this.silent && this._level >= ERROR_LEVEL) {
       Logger.doLog.call(this, "ERR", "error", "red", arguments);
     }
-    return arguments;
+    return this;
   }
 
   /**
@@ -630,6 +686,7 @@ class Logger {
       }),
       timeout
     );
+    return this;
   }
 
   /**
@@ -640,6 +697,7 @@ class Logger {
    */
   debugThrottle(msg, timeout) {
     this.throttle(msg, timeout, "debug");
+    return this;
   }
 
   /**
@@ -650,6 +708,7 @@ class Logger {
    */
   deepDebugThrottle(msg, timeout) {
     this.throttle(msg, timeout, "deepDebug");
+    return this;
   }
 
   /**
@@ -660,6 +719,7 @@ class Logger {
    */
   logThrottle(msg, timeout) {
     this.throttle(msg, timeout, "log");
+    return this;
   }
 
   /**
@@ -670,6 +730,7 @@ class Logger {
    */
   infoThrottle(msg, timeout) {
     this.throttle(msg, timeout, "info");
+    return this;
   }
 
   /**
@@ -680,6 +741,7 @@ class Logger {
    */
   highlightThrottle(msg, timeout) {
     this.throttle(msg, timeout, "highlight");
+    return this;
   }
 
   /**
@@ -690,6 +752,7 @@ class Logger {
    */
   warnThrottle(msg, timeout) {
     this.throttle(msg, timeout, "warn");
+    return this;
   }
 
   /**
@@ -700,6 +763,7 @@ class Logger {
    */
   errorThrottle(msg, timeout) {
     this.throttle(msg, timeout, "error");
+    return this;
   }
 
   /**

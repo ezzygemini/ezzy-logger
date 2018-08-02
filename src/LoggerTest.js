@@ -96,26 +96,26 @@ describe("Logger", () => {
     expect(logger.log).toBeDefined();
   });
 
-  it("should return the same arguments passed to the methods", () => {
-    expect(logger.debug("asdf")[0]).toBe("asdf");
-    expect(logger.deepDebug("asdf")[0]).toBe("asdf");
-    expect(logger.highlight("asdf")[0]).toBe("asdf");
-    expect(logger.warn("asdf")[0]).toBe("asdf");
-    expect(logger.error("asdf")[0]).toBe("asdf");
-    expect(logger.log("asdf")[0]).toBe("asdf");
+  it("should return the same logger to be able to chain methods", () => {
+    expect(logger.debug("asdf")).toBe(logger);
+    expect(logger.deepDebug("asdf")).toBe(logger);
+    expect(logger.highlight("asdf")).toBe(logger);
+    expect(logger.warn("asdf")).toBe(logger);
+    expect(logger.error("asdf")).toBe(logger);
+    expect(logger.log("asdf")).toBe(logger);
   });
 
   it("should log proper information from an exec command", done => {
     spyOn(logger, "fromExec");
     exec("ls", logger.fromExec);
-    exec("ls", () => {
+    setTimeout(() => {
       expect(logger.fromExec).toHaveBeenCalledWith(
         null,
         jasmine.anything(),
         ""
       );
       done();
-    });
+    }, 100);
   });
 
   it("should properly log information", done => {
