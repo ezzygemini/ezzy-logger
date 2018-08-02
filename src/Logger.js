@@ -136,9 +136,7 @@ class Logger {
    * @param {boolean} bold If the message should be bold.
    */
   static color(color, msg, bold = false) {
-    if (isBrowser) {
-      return msg;
-    } else if (bold) {
+    if (bold) {
       return clc[color].bold(msg);
     } else {
       return clc[color](msg);
