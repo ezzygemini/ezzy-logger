@@ -167,7 +167,7 @@ class Logger {
    */
   static color(color, msg, bold = false) {
     if (!color) {
-      return msg;
+      return [msg];
     }
     if (isBrowser) {
       if (color === "blackBright") {
