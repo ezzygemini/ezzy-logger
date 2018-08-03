@@ -112,7 +112,7 @@ class Logger {
   set level(level) {
     if (!process.env.HIDE_ARGUMENTS) {
       console.log(
-        Logger.color(
+        ...Logger.color(
           "magentaBright",
           `[LOG] Requested logging level to change to '${level}'`,
           true
@@ -144,6 +144,11 @@ class Logger {
    */
   static color(color, msg, bold = false) {
     if (isBrowser) {
+      if (color === "blackBright") {
+        color = "gray";
+      } else if (color.includes("Bright")) {
+        color = color.replace("Bright", "");
+      }
       return [
         `%c ${msg}`,
         `color:${color};font-weight:${bold ? "bold" : "normal"}`
@@ -268,7 +273,10 @@ class Logger {
       if (typeof config.suffix === "string") {
         config.message += Logger.color("blackBright", ` (${config.suffix})`)[0];
       } else if (config.suffix) {
-        config.message += Logger.color("blackBright", ` (${this._getLastLine()})`)[0];
+        config.message += Logger.color(
+          "blackBright",
+          ` (${this._getLastLine()})`
+        )[0];
       }
 
       if (config.ts || config.timestamp) {
