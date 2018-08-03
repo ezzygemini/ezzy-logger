@@ -140,15 +140,18 @@ class Logger {
    * @param {string} color The color of the message.
    * @param {string} msg The string to color.
    * @param {boolean} bold If the message should be bold.
+   * @returns {string[]}
    */
   static color(color, msg, bold = false) {
-    if( isBrowser){
-      console.log('%c Oh my heavens! ', 'background: #222; color: #bada55');
-
+    if (isBrowser) {
+      return [
+        `%c ${msg}`,
+        `color:${color};font-weight:${bold ? "bold" : "normal"}`
+      ];
     } else if (bold) {
-      return clc[color].bold(msg);
+      return [clc[color].bold(msg)];
     } else {
-      return clc[color](msg);
+      return [clc[color](msg)];
     }
   }
 
@@ -263,22 +266,19 @@ class Logger {
       }
 
       if (typeof config.suffix === "string") {
-        config.message += Logger.color("blackBright", ` (${config.suffix})`);
+        config.message += Logger.color("blackBright", ` (${config.suffix})`)[0];
       } else if (config.suffix) {
-        config.message += Logger.color(
-          "blackBright",
-          ` (${this._getLastLine()})`
-        );
+        config.message += Logger.color("blackBright", ` (${this._getLastLine()})`)[0];
       }
 
       if (config.ts || config.timestamp) {
-        config.message += Logger.color("blackBright", ` > ${Date.now()}`);
+        config.message += Logger.color("blackBright", ` > ${Date.now()}`)[0];
       }
 
       if (config.muted) {
-        config.message = Logger.color("blackBright", config.message);
+        config.message = Logger.color("blackBright", config.message)[0];
       } else if (config.color) {
-        config.message = Logger.color(config.color, config.message);
+        config.message = Logger.color(config.color, config.message)[0];
       }
     }
 
@@ -298,7 +298,7 @@ class Logger {
     }
 
     if (config.borderTop) {
-      console[methodName](border);
+      console[methodName](...border);
     }
 
     if (config.paddingTop) {
@@ -322,7 +322,7 @@ class Logger {
     }
 
     if (config.stack) {
-      console[methodName](Logger.color(config.color, config.stack));
+      console[methodName](...Logger.color(config.color, config.stack));
     }
 
     if (config.paddingBottom) {
@@ -332,7 +332,7 @@ class Logger {
     }
 
     if (config.borderBottom) {
-      console[methodName](border);
+      console[methodName](...border);
     }
 
     if (config.marginBottom) {
@@ -362,7 +362,7 @@ class Logger {
       const fileName = path.basename(call.getFileName());
       const colNo = call.getColumnNumber();
       const lineNo = call.getLineNumber();
-      return Logger.color("blackBright", `${fileName} ${lineNo}:${colNo}`);
+      return `${fileName} ${lineNo}:${colNo}`;
     } catch (e) {
       return "";
     }
