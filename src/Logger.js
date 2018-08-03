@@ -166,6 +166,9 @@ class Logger {
    * @returns {string[]}
    */
   static color(color, msg, bold = false) {
+    if (!color) {
+      return msg;
+    }
     if (isBrowser) {
       if (color === "blackBright") {
         color = "gray";
@@ -341,16 +344,16 @@ class Logger {
     if (isBrowser) {
       let msg = indentation + `[${logType}]`;
       if (config.title) {
-        msg += ' ' + config.title;
+        msg += " " + config.title;
       }
       if (config.msg) {
-        msg += ' ' + config.msg;
+        msg += " " + config.msg;
       } else if (config.message) {
-        msg += ' ' + config.message;
+        msg += " " + config.message;
       }
 
       if (config.timestamp || config.ts) {
-        msg += ' ' + Date.now().toString();
+        msg += " " + Date.now().toString();
       }
       Logger.console[methodName](
         ...Logger.color(config.color, msg),
