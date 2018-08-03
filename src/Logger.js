@@ -142,7 +142,10 @@ class Logger {
    * @param {boolean} bold If the message should be bold.
    */
   static color(color, msg, bold = false) {
-    if (bold) {
+    if( isBrowser){
+      console.log('%c Oh my heavens! ', 'background: #222; color: #bada55');
+
+    } else if (bold) {
       return clc[color].bold(msg);
     } else {
       return clc[color](msg);
@@ -450,7 +453,7 @@ class Logger {
    */
   highlight() {
     if (!this.silent && this._level >= HIGHLIGHT_LEVEL) {
-      Logger.doLog.call(this, "HGH", "error", "yellowBright", arguments);
+      Logger.doLog.call(this, "HGH", "info", "yellowBright", arguments);
     }
     return this;
   }
