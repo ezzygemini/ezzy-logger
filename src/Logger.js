@@ -339,15 +339,23 @@ class Logger {
     }
 
     if (isBrowser) {
-      const args = [].concat(
-        indentation || [],
-        `[${logType}]`,
-        config.title || [],
-        config.message || config.msg || [],
-        config.data || [],
-        config.timestamp || config.ts ? Date.now() : []
+      let msg = indentation + `[${logType}]`;
+      if (config.title) {
+        msg += ' ' + config.title;
+      }
+      if (config.msg) {
+        msg += ' ' + config.msg;
+      } else if (config.message) {
+        msg += ' ' + config.message;
+      }
+
+      if (config.timestamp || config.ts) {
+        msg += ' ' + Date.now().toString();
+      }
+      Logger.console[methodName](
+        ...Logger.color(config.color, msg),
+        config.data
       );
-      Logger.console[methodName](...args);
     } else {
       Logger.console[methodName](indentation + config.message);
     }
