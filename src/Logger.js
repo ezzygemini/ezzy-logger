@@ -72,7 +72,7 @@ class Logger {
 
     // Inform the debugging status.
     if (!process.env.HIDE_ARGUMENTS) {
-      console.log(
+      Logger.console.log(
         "[LOG] Logging level set to " +
           this._level +
           " | is " +
@@ -81,6 +81,29 @@ class Logger {
           (this.silent ? "" : "not") +
           " silent"
       );
+    }
+  }
+
+  /**
+   * Globalizes the console for other use.
+   */
+  static globalize() {
+    if (!isBrowser) {
+      throw "Console globalization is not available.";
+    }
+    window._console = console;
+    window.console = Logger.logger;
+  }
+
+  /**
+   * Obtains the necessary console.
+   * @returns {*}
+   */
+  static get console() {
+    if (isBrowser) {
+      return window._console || window.console;
+    } else {
+      return console;
     }
   }
 
@@ -111,7 +134,7 @@ class Logger {
    */
   set level(level) {
     if (!process.env.HIDE_ARGUMENTS) {
-      console.log(
+      Logger.console.log(
         ...Logger.color(
           "magentaBright",
           `[LOG] Requested logging level to change to '${level}'`,
@@ -292,7 +315,7 @@ class Logger {
 
     if (config.marginTop) {
       for (i = 0; i < config.marginTop; i++) {
-        console[methodName]("");
+        Logger.console[methodName]("");
       }
     }
 
@@ -306,12 +329,12 @@ class Logger {
     }
 
     if (config.borderTop) {
-      console[methodName](...border);
+      Logger.console[methodName](...border);
     }
 
     if (config.paddingTop) {
       for (i = 0; i < config.paddingTop; i++) {
-        console[methodName]("");
+        Logger.console[methodName]("");
       }
     }
 
@@ -324,28 +347,28 @@ class Logger {
         config.data || [],
         config.timestamp || config.ts ? Date.now() : []
       );
-      console[methodName](...args);
+      Logger.console[methodName](...args);
     } else {
-      console[methodName](indentation + config.message);
+      Logger.console[methodName](indentation + config.message);
     }
 
     if (config.stack) {
-      console[methodName](...Logger.color(config.color, config.stack));
+      Logger.console[methodName](...Logger.color(config.color, config.stack));
     }
 
     if (config.paddingBottom) {
       for (i = 0; i < config.paddingBottom; i++) {
-        console[methodName]("");
+        Logger.console[methodName]("");
       }
     }
 
     if (config.borderBottom) {
-      console[methodName](...border);
+      Logger.console[methodName](...border);
     }
 
     if (config.marginBottom) {
       for (i = 0; i < config.marginBottom; i++) {
-        console[methodName]("");
+        Logger.console[methodName]("");
       }
     }
   }
@@ -377,6 +400,13 @@ class Logger {
   }
 
   /**
+   * Shortcut to the globalization method.
+   */
+  globalize() {
+    Logger.globalize();
+  }
+
+  /**
    * Toggles the groupping.
    * @param args
    * @returns {Logger}
@@ -384,9 +414,9 @@ class Logger {
   group(...args) {
     this.isGroupped = !this.isGroupped;
     if (this.isGroupped) {
-      console.group(...args);
+      Logger.console.group(...args);
     } else {
-      console.groupEnd();
+      Logger.console.groupEnd();
     }
     return this;
   }
@@ -413,7 +443,7 @@ class Logger {
    * @returns {Logger}
    */
   groupStart(...args) {
-    console.group(...args);
+    Logger.console.group(...args);
     return this;
   }
 
@@ -422,7 +452,7 @@ class Logger {
    * @returns {Logger}
    */
   groupEnd() {
-    console.groupEnd();
+    Logger.console.groupEnd();
     return this;
   }
 
