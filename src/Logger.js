@@ -263,7 +263,9 @@ class Logger {
         } else {
           config.message = config.error.message;
         }
-        config.message.stack = config.error.stack;
+        if (config.error.stack) {
+          config.message.stack = config.error.stack;
+        }
       }
 
       if (config.data) {
