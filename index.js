@@ -7,8 +7,20 @@ const Logger = require("./src/Logger");
 const logger = Logger.logger;
 
 module.exports = {
+  /**
+   * @type {Logger}
+   */
   logger,
+  /**
+   * @type {Logger}
+   */
   Logger,
+  /**
+   * @type {Logger}
+   */
   console: logger,
+  /**
+   * @type {Logger}
+   */
   log: logger
 };
