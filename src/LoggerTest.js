@@ -73,6 +73,7 @@ describe("Logger", () => {
   });
 
   it("should silence and talk correctly", done => {
+    logger.level = 'log';
     spyOn(Logger, "doLog");
     logger.log("hi");
     expect(Logger.doLog).toHaveBeenCalledTimes(0);

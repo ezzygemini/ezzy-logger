@@ -500,7 +500,7 @@ class Logger {
 
   /**
    * Sends a highlight info log to the console.
-   * @returns {Arguments}
+   * @returns {Logger}
    */
   highlight() {
     if (!this.silent && this._level >= HIGHLIGHT_LEVEL) {
@@ -511,7 +511,7 @@ class Logger {
 
   /**
    * Sends a debug log into the console.
-   * @returns {Arguments}
+   * @returns {Logger}
    */
   debug() {
     if (!this.silent && this.isDebugging) {
@@ -522,7 +522,7 @@ class Logger {
 
   /**
    * Sends a deep debug log into the console.
-   * @returns {Arguments}
+   * @returns {Logger}
    */
   deepDebug() {
     if (!this.silent && this._level >= DEEP_DEBUG_LEVEL) {
@@ -533,7 +533,7 @@ class Logger {
 
   /**
    * Sends an info log into the console.
-   * @returns {Arguments}
+   * @returns {Logger}
    */
   info() {
     if (!this.silent && this._level >= INFO_LEVEL) {
@@ -544,7 +544,7 @@ class Logger {
 
   /**
    * Sends a simple log into the console.
-   * @returns {Arguments}
+   * @returns {Logger}
    */
   log() {
     if (!this.silent && this._level >= LOG_LEVEL) {
@@ -566,7 +566,7 @@ class Logger {
 
   /**
    * Sends an error log into the console.
-   * @returns {Arguments}
+   * @returns {Logger}
    */
   error() {
     if (!this.silent && this._level >= ERROR_LEVEL) {
@@ -747,7 +747,7 @@ class Logger {
    * Shortcut to throttle debug.
    * @param msg
    * @param timeout
-   * @returns void
+   * @returns {Logger}
    */
   debugThrottle(msg, timeout) {
     this.throttle(msg, timeout, "debug");
@@ -758,7 +758,7 @@ class Logger {
    * Shortcut to throttle deep debug.
    * @param msg
    * @param timeout
-   * @returns void
+   * @returns {Logger}
    */
   deepDebugThrottle(msg, timeout) {
     this.throttle(msg, timeout, "deepDebug");
@@ -769,7 +769,7 @@ class Logger {
    * Shortcut to throttle log.
    * @param msg
    * @param timeout
-   * @returns void
+   * @returns {Logger}
    */
   logThrottle(msg, timeout) {
     this.throttle(msg, timeout, "log");
@@ -780,7 +780,7 @@ class Logger {
    * Shortcut to throttle info.
    * @param msg
    * @param timeout
-   * @returns void
+   * @returns {Logger}
    */
   infoThrottle(msg, timeout) {
     this.throttle(msg, timeout, "info");
@@ -791,7 +791,7 @@ class Logger {
    * Shortcut to throttle debug.
    * @param msg
    * @param timeout
-   * @returns void
+   * @returns {Logger}
    */
   highlightThrottle(msg, timeout) {
     this.throttle(msg, timeout, "highlight");
@@ -802,7 +802,7 @@ class Logger {
    * Shortcut to throttle debug.
    * @param msg
    * @param timeout
-   * @returns void
+   * @returns {Logger}
    */
   warnThrottle(msg, timeout) {
     this.throttle(msg, timeout, "warn");
@@ -813,7 +813,7 @@ class Logger {
    * Shortcut to throttle error.
    * @param msg
    * @param timeout
-   * @returns void
+   * @returns {Logger}
    */
   errorThrottle(msg, timeout) {
     this.throttle(msg, timeout, "error");
