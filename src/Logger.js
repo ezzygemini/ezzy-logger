@@ -22,7 +22,7 @@ const DEEP_DEBUG_LEVEL = LOG_LEVELS.indexOf("deepDebug");
 const WARN_LEVEL = LOG_LEVELS.indexOf("warn");
 const ERROR_LEVEL = LOG_LEVELS.indexOf("error");
 const trueTypeOf = require("ezzy-typeof");
-const isBrowser = typeof window !== "undefined";
+const isBrowser = !process || !process.argv;
 
 /**
  * The throttle timeouts.
@@ -69,6 +69,14 @@ class Logger {
      * @type {string[]}
      */
     this.LEVELS = LOG_LEVELS;
+
+    /**
+     * The group title. This can be updated by starting a new group and
+     * every log after that will contain this title.
+     * @type {string}
+     * @private
+     */
+    this._groupTitle = "";
 
     // Inform the debugging status.
     if (!process.env.HIDE_ARGUMENTS) {
@@ -194,7 +202,7 @@ class Logger {
    * @param {string} debugColor Color to use for the console.
    * @param {Arguments} args The arguments to check as configuration.
    */
-  static doLog(logType, methodName, debugColor, args) {
+  doLog(logType, methodName, debugColor, args) {
     const config = configSetup(
       {
         title: "",
@@ -282,6 +290,8 @@ class Logger {
 
       if (config.title) {
         config.message = `[${config.title}] ${config.message}`;
+      } else if (this._groupTitle) {
+        config.message = `[${this._groupTitle}] ${config.message}`;
       }
 
       if (
@@ -427,9 +437,9 @@ class Logger {
   group(...args) {
     this.isGroupped = !this.isGroupped;
     if (this.isGroupped) {
-      Logger.console.group(...args);
+      this.groupStart();
     } else {
-      Logger.console.groupEnd();
+      this.groupEnd();
     }
     return this;
   }
@@ -457,6 +467,14 @@ class Logger {
    */
   groupStart(...args) {
     Logger.console.group(...args);
+    // Save the second argument as the title of the group.
+    if (args.length && typeof args[0] === "string") {
+      this._groupTitle =
+        args[0].substr(0, 10) + (args[0].length > 10 ? "..." : "");
+    } else {
+      this._groupTitle = "";
+    }
+    this.isGroupped = true;
     return this;
   }
 
@@ -466,6 +484,8 @@ class Logger {
    */
   groupEnd() {
     Logger.console.groupEnd();
+    this._groupTitle = "";
+    this.isGroupped = false;
     return this;
   }
 
@@ -504,7 +524,7 @@ class Logger {
    */
   highlight() {
     if (!this.silent && this._level >= HIGHLIGHT_LEVEL) {
-      Logger.doLog.call(this, "HGH", "info", "yellowBright", arguments);
+      this.doLog.call(this, "HGH", "info", "yellowBright", arguments);
     }
     return this;
   }
@@ -515,7 +535,7 @@ class Logger {
    */
   debug() {
     if (!this.silent && this.isDebugging) {
-      Logger.doLog.call(this, "DBG", "debug", "magenta", arguments);
+      this.doLog.call(this, "DBG", "debug", "magenta", arguments);
     }
     return this;
   }
@@ -526,7 +546,7 @@ class Logger {
    */
   deepDebug() {
     if (!this.silent && this._level >= DEEP_DEBUG_LEVEL) {
-      Logger.doLog.call(this, "DBG", "debug", "blackBright", arguments);
+      this.doLog.call(this, "DBG", "debug", "blackBright", arguments);
     }
     return this;
   }
@@ -537,7 +557,7 @@ class Logger {
    */
   info() {
     if (!this.silent && this._level >= INFO_LEVEL) {
-      Logger.doLog.call(this, "INF", "info", null, arguments);
+      this.doLog.call(this, "INF", "info", null, arguments);
     }
     return this;
   }
@@ -548,7 +568,7 @@ class Logger {
    */
   log() {
     if (!this.silent && this._level >= LOG_LEVEL) {
-      Logger.doLog.call(this, "LOG", "log", null, arguments);
+      this.doLog.call(this, "LOG", "log", null, arguments);
     }
     return this;
   }
@@ -559,7 +579,7 @@ class Logger {
    */
   warn() {
     if (!this.silent && this._level >= WARN_LEVEL) {
-      Logger.doLog.call(this, "WRN", "warn", "yellow", arguments);
+      this.doLog.call(this, "WRN", "warn", "yellow", arguments);
     }
     return this;
   }
@@ -570,7 +590,7 @@ class Logger {
    */
   error() {
     if (!this.silent && this._level >= ERROR_LEVEL) {
-      Logger.doLog.call(this, "ERR", "error", "red", arguments);
+      this.doLog.call(this, "ERR", "error", "red", arguments);
     }
     return this;
   }
@@ -581,7 +601,7 @@ class Logger {
    */
   fatal(...args) {
     if (!this.silent) {
-      Logger.doLog("ERR", "error", "red", ...args);
+      this.doLog("ERR", "error", "red", ...args);
     }
     throw new TypeError(args[0]);
   }

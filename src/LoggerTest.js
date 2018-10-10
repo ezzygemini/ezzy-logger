@@ -3,10 +3,13 @@ let warn = jasmine.createSpy();
 let debug = jasmine.createSpy();
 let info = jasmine.createSpy();
 let error = jasmine.createSpy();
+let group = jasmine.createSpy();
+let groupEnd = jasmine.createSpy();
+let groupStart = jasmine.createSpy();
 const Logger = require("proxyquire")
   .noCallThru()
   .load("./Logger", {
-    "./console": { log, warn, debug, info, error }
+    "./console": { log, warn, debug, info, error, group, groupEnd, groupStart }
   });
 const { exec } = require("child_process");
 let logger;
@@ -74,12 +77,12 @@ describe("Logger", () => {
 
   it("should silence and talk correctly", done => {
     logger.level = 'log';
-    spyOn(Logger, "doLog");
+    spyOn(logger, "doLog");
     logger.log("hi");
-    expect(Logger.doLog).toHaveBeenCalledTimes(0);
+    expect(logger.doLog).toHaveBeenCalledTimes(0);
     logger.talk();
     logger.log("hi");
-    expect(Logger.doLog).toHaveBeenCalled();
+    expect(logger.doLog).toHaveBeenCalled();
     done();
   });
 
@@ -121,7 +124,7 @@ describe("Logger", () => {
 
   it("should properly log information", done => {
     logger.talk();
-    spyOn(Logger, "doLog");
+    spyOn(logger, "doLog");
     logger.level = "error";
     logger.deepDebug("hi");
     logger.debug("hi");
@@ -130,7 +133,7 @@ describe("Logger", () => {
     logger.log("hi");
     logger.error("hi");
     logger.warn("hi");
-    expect(Logger.doLog).toHaveBeenCalledTimes(1);
+    expect(logger.doLog).toHaveBeenCalledTimes(1);
     logger.level = "debug";
     logger.deepDebug("hi");
     logger.debug("hi");
@@ -139,10 +142,10 @@ describe("Logger", () => {
     logger.log("hi");
     logger.error("hi");
     logger.warn("hi");
-    expect(Logger.doLog).toHaveBeenCalledTimes(7);
+    expect(logger.doLog).toHaveBeenCalledTimes(7);
     logger.level = 10;
     logger.deepDebug("hi");
-    expect(Logger.doLog).toHaveBeenCalledTimes(8);
+    expect(logger.doLog).toHaveBeenCalledTimes(8);
     done();
     logger.silence();
   });
@@ -261,4 +264,13 @@ describe("Logger", () => {
     expect(defLogger.debug).toHaveBeenCalledTimes(1);
     expect(defLogger.error).toHaveBeenCalledTimes(2);
   });
+
+  it('should start a new logging group', () => {
+    logger.level = 'debug';
+    spyOn(logger, "doLog");
+    logger.groupStart('Something');
+    logger.debug("Hello World");
+    logger.groupEnd();
+    expect(group).toHaveBeenCalledWith('Something');
+  })
 });
