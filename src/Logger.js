@@ -470,7 +470,7 @@ class Logger {
     // Save the second argument as the title of the group.
     if (args.length && typeof args[0] === "string") {
       this._groupTitle =
-        args[0].substr(0, 10) + (args[0].length > 10 ? "..." : "");
+        args[0].length > 25 ? `${args[0].substr(0, 22)}...` : args[0].length;
     } else {
       this._groupTitle = "";
     }
