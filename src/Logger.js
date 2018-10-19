@@ -272,7 +272,7 @@ class Logger {
           config.message = config.error.message;
         }
         if (config.error.stack) {
-          config.message.stack = config.error.stack;
+          config.message = config.error.stack;
         }
       }
 
