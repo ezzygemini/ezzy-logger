@@ -232,7 +232,8 @@ class Logger {
       ["message:error|string|function"],
       ["title:string", "message:string|function"],
       ["basics:object", "message:string|function"],
-      ["title:string", "data:*"],
+      ["title:string", "error:error"],
+      ["title:string", "data:object|array|number|boolean"],
       ["title:string", "message:string|function", "error:error"],
       ["title:string", "message:string|function", "data:*"],
       ["basics:object", "title:string", "message:string|function"],
@@ -246,7 +247,6 @@ class Logger {
       ["basics:object", "title:string", "message:string|function", "data:*"],
       ["this:object"]
     );
-    const indentation = new Array(config.indent).join(" ");
     let i;
     let border;
 
@@ -353,6 +353,11 @@ class Logger {
       }
     }
 
+    const indentation = !config.indent
+      ? ""
+      : typeof config.indent === "number"
+        ? new Array(config.indent).join(" ")
+        : config.indent;
     if (isBrowser) {
       let msg = indentation + `[${logType}]`;
       if (config.title) {

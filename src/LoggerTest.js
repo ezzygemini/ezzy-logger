@@ -33,6 +33,7 @@ describe("Logger", () => {
   });
 
   it("should log with the correct configuration", done => {
+    logger.talk();
     logger.level = "deepDebug";
     logger.log("Test");
     expect(log.calls.mostRecent().args[0]).toMatch(/^\[LOG] Test.*$/);
@@ -76,6 +77,7 @@ describe("Logger", () => {
   });
 
   it("should silence and talk correctly", done => {
+    logger.silence();
     logger.level = 'log';
     spyOn(logger, "doLog");
     logger.log("hi");
