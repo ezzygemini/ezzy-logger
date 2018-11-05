@@ -436,24 +436,18 @@ class Logger {
 
   /**
    * Toggles the groupping.
-   * @param args
+   * @param {*} args
    * @returns {Logger}
    */
   group(...args) {
-    this.isGroupped = !this.isGroupped;
-    if (this.isGroupped) {
-      this.groupStart();
-    } else {
-      this.groupEnd();
-    }
-    return this;
+    return this.groupStart(...args);
   }
 
   /**
    * Shortcut for group end.
    * @returns {*}
    */
-  ungroup() {
+  ungroup(...args) {
     return this.groupEnd();
   }
 
