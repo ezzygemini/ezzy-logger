@@ -10,6 +10,7 @@ const LOG_LEVELS = [
 const console = require("./console");
 const argument = require("ezzy-argument");
 const DEFAULT_LEVEL = argument(["LOG_LEVEL", "NODE_LOG_LEVEL"], "info");
+const BORING_LOG = argument("LOG_BORING", "false") !== "false";
 const path = require("path");
 const callsite = require("callsite");
 const clc = require("cli-color");
@@ -174,6 +175,9 @@ class Logger {
    * @returns {string[]}
    */
   static color(color, msg, bold = false) {
+    if (BORING_LOG) {
+      return [msg];
+    }
     if (!color) {
       return [msg];
     }
@@ -356,8 +360,8 @@ class Logger {
     const indentation = !config.indent
       ? ""
       : typeof config.indent === "number"
-        ? new Array(config.indent).join(" ")
-        : config.indent;
+      ? new Array(config.indent).join(" ")
+      : config.indent;
     if (isBrowser) {
       let msg = indentation + `[${logType}]`;
       if (config.title) {
