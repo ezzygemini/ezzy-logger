@@ -72,6 +72,12 @@ class Logger {
     this.LEVELS = LOG_LEVELS;
 
     /**
+     * Indicates if the log should be boring (no colors).
+     * @type {boolean}
+     */
+    this._boring = BORING_LOG;
+
+    /**
      * The group title. This can be updated by starting a new group and
      * every log after that will contain this title.
      * @type {string}
@@ -144,7 +150,7 @@ class Logger {
   set level(level) {
     if (!process.env.HIDE_ARGUMENTS) {
       Logger.console.log(
-        ...Logger.color(
+        ...this.color(
           "magentaBright",
           `[LOG] Requested logging level to change to '${level}'`,
           true
@@ -168,14 +174,22 @@ class Logger {
   }
 
   /**
+   * Changes the boring state.
+   * @param {boolean} value If the log should be boring.
+   */
+  set boring(value) {
+    this._boring = Boolean(value);
+  }
+
+  /**
    * Turns a message into a colored message.
    * @param {string} color The color of the message.
    * @param {string} msg The string to color.
    * @param {boolean} bold If the message should be bold.
    * @returns {string[]}
    */
-  static color(color, msg, bold = false) {
-    if (BORING_LOG) {
+  color(color, msg, bold = false) {
+    if (this._boring) {
       return [msg];
     }
     if (!color) {
@@ -313,22 +327,22 @@ class Logger {
       }
 
       if (typeof config.suffix === "string") {
-        config.message += Logger.color("blackBright", ` (${config.suffix})`)[0];
+        config.message += this.color("blackBright", ` (${config.suffix})`)[0];
       } else if (config.suffix) {
-        config.message += Logger.color(
+        config.message += this.color(
           "blackBright",
           ` (${this._getLastLine()})`
         )[0];
       }
 
       if (config.ts || config.timestamp) {
-        config.message += Logger.color("blackBright", ` > ${Date.now()}`)[0];
+        config.message += this.color("blackBright", ` > ${Date.now()}`)[0];
       }
 
       if (config.muted) {
-        config.message = Logger.color("blackBright", config.message)[0];
+        config.message = this.color("blackBright", config.message)[0];
       } else if (config.color) {
-        config.message = Logger.color(config.color, config.message)[0];
+        config.message = this.color(config.color, config.message)[0];
       }
     }
 
@@ -339,7 +353,7 @@ class Logger {
     }
 
     if (config.borderTop || config.borderBottom) {
-      border = Logger.color(
+      border = this.color(
         config.color,
         new Array(Math.max(config.borderTop, config.borderBottom)).join(
           config.borderChar
@@ -376,16 +390,13 @@ class Logger {
       if (config.timestamp || config.ts) {
         msg += " " + Date.now().toString();
       }
-      Logger.console[methodName](
-        ...Logger.color(config.color, msg),
-        config.data
-      );
+      Logger.console[methodName](...this.color(config.color, msg), config.data);
     } else {
       Logger.console[methodName](indentation + config.message);
     }
 
     if (config.stack) {
-      Logger.console[methodName](...Logger.color(config.color, config.stack));
+      Logger.console[methodName](...this.color(config.color, config.stack));
     }
 
     if (config.paddingBottom) {
