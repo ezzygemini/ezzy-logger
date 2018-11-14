@@ -10,7 +10,9 @@ const LOG_LEVELS = [
 const console = require("./console");
 const argument = require("ezzy-argument");
 const DEFAULT_LEVEL = argument(["LOG_LEVEL", "NODE_LOG_LEVEL"], "info");
-const BORING_LOG = argument("LOG_BORING", "false") !== "false";
+const BORING_LOG = argument("BORING_LOG", "false") !== "false";
+const USE_CONSOLE_LOG = argument("USE_CONSOLE_LOG", "false") !== "false";
+const HIDE_ARGUMENTS = argument("HIDE_ARGUMENTS", "false") !== "false";
 const path = require("path");
 const callsite = require("callsite");
 const clc = require("cli-color");
@@ -78,6 +80,13 @@ class Logger {
     this._boring = BORING_LOG;
 
     /**
+     * Check if we should use the native console log.
+     * @type {boolean}
+     * @private
+     */
+    this._consoleLog = USE_CONSOLE_LOG;
+
+    /**
      * The group title. This can be updated by starting a new group and
      * every log after that will contain this title.
      * @type {string}
@@ -86,7 +95,7 @@ class Logger {
     this._groupTitle = "";
 
     // Inform the debugging status.
-    if (!process.env.HIDE_ARGUMENTS) {
+    if (!HIDE_ARGUMENTS) {
       Logger.console.log(
         "[LOG] Logging level set to " +
           this._level +
@@ -148,7 +157,7 @@ class Logger {
    * @param {*} level The new level
    */
   set level(level) {
-    if (!process.env.HIDE_ARGUMENTS) {
+    if (!HIDE_ARGUMENTS) {
       Logger.console.log(
         ...this.color(
           "magentaBright",
@@ -179,6 +188,14 @@ class Logger {
    */
   set boring(value) {
     this._boring = Boolean(value);
+  }
+
+  /**
+   * Setter of the value to use the native console log.
+   * @param value
+   */
+  set consoleLog(value) {
+    this._consoleLog = Boolean(value);
   }
 
   /**
@@ -221,6 +238,9 @@ class Logger {
    * @param {Arguments} args The arguments to check as configuration.
    */
   doLog(logType, methodName, debugColor, args) {
+    if (this._consoleLog) {
+      methodName = "log";
+    }
     const config = configSetup(
       {
         title: "",
