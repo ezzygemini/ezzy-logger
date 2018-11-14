@@ -469,6 +469,9 @@ class Logger {
    * @returns {Logger}
    */
   groupStart(...args) {
+    if (this.isGroupped) {
+      this.groupEnd();
+    }
     Logger.console.group(...args);
     // Save the second argument as the title of the group.
     if (args.length && typeof args[0] === "string") {
