@@ -375,7 +375,8 @@ class Logger {
     if (config.borderTop || config.borderBottom) {
       border = this.color(
         config.color,
-        new Array(Math.max(config.borderTop, config.borderBottom)).join(
+        "".padStart(
+          Math.max(config.borderTop, config.borderBottom),
           config.borderChar
         )
       );
