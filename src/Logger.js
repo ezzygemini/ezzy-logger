@@ -60,6 +60,12 @@ class Logger {
     this.isGroupped = false;
 
     /**
+     * The time the group started.
+     * @type {number}
+     */
+    this._groupTS = 0;
+
+    /**
      * The level of logging.
      *
      * @type {string}
@@ -357,6 +363,13 @@ class Logger {
 
       if (config.ts || config.timestamp) {
         config.message += this.color("blackBright", ` > ${Date.now()}`)[0];
+
+        if (this._groupTS) {
+          config.message += this.color(
+            "blackBright",
+            ` ⏱ ${Date.now() - this._groupTS}ms`
+          )[0];
+        }
       }
 
       if (config.muted) {
@@ -504,6 +517,7 @@ class Logger {
     if (this.isGroupped) {
       this.groupEnd();
     }
+    this._groupTS = Date.now();
     Logger.console.group(...args);
     // Save the second argument as the title of the group.
     if (args.length && typeof args[0] === "string") {
@@ -523,6 +537,7 @@ class Logger {
   groupEnd() {
     Logger.console.groupEnd();
     this._groupTitle = "";
+    this._groupTS = 0;
     this.isGroupped = false;
     return this;
   }
