@@ -27,7 +27,7 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "ezzy-testing": "^0.1.25",
+    "ezzy-testing": "^0.1.26",
     "proxyquire": "^2.1.0"
   }
 }
