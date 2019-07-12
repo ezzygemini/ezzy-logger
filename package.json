@@ -28,6 +28,6 @@
   },
   "devDependencies": {
     "ezzy-testing": "^0.1.26",
-    "proxyquire": "^2.1.0"
+    "proxyquire": "^2.1.1"
   }
 }
